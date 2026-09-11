@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Floot NG - Driver Direct Dispatch - No Marketplace</title>
+<title>Floot NG - Driver Direct Dispatch</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -15,8 +15,6 @@ body{background:var(--bg);color:#fff;font-family:Inter,sans-serif;min-height:100
 .live{font-size:10px;font-weight:800;padding:5px 10px;border-radius:999px;border:1px solid rgba(16,185,129,.2);background:rgba(16,185,129,.1);color:#6EE7B7;display:flex;gap:6px;align-items:center}
 .dot{width:6px;height:6px;border-radius:50%;background:#10B981;box-shadow:0 0 8px #10B981;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.online-toggle{background:#1A1329;border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer}
-.online-toggle.on{background:rgba(16,185,129,.14);border-color:rgba(16,185,129,.3);color:#6EE7B7}
 .main{padding:14px;flex:1;display:flex;flex-direction:column;gap:14px}
 .card{background:linear-gradient(160deg,#1A1226,#120D1D);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:16px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -43,17 +41,17 @@ body{background:var(--bg);color:#fff;font-family:Inter,sans-serif;min-height:100
 <body>
 <div class="app">
   <div class="header">
-    <div><div class="logo">FLOOT NG DRIVER</div><div class="small" id="driverId">ID: DRV_...</div></div>
-    <div style="display:flex;gap:8px;align-items:center"><div class="live"><span class="dot"></span><span id="conn">CONNECTING</span></div><div id="onlineBtn" class="online-toggle on">ONLINE</div></div>
+    <div><div class="logo">FLOOT NG DRIVER</div><div class="small" id="driverId">ID:...</div></div>
+    <div class="live"><span class="dot"></span><span id="conn">CONNECTING...</span></div>
   </div>
   <div class="main">
     <div class="stats">
       <div class="stat"><span class="small">EARNINGS TODAY</span><b id="earnings">₦0</b><span class="small" id="tripsToday">0 trips</span></div>
-      <div class="stat"><span class="small">STATUS</span><b id="statusText" style="font-size:14px;color:#6EE7B7">Waiting for orders...</b><span class="small">First to accept wins</span></div>
+      <div class="stat"><span class="small">STATUS</span><b id="statusText" style="font-size:13px;color:#6EE7B7">Waiting for orders...</b><span class="small" id="debugCount">0 searching</span></div>
     </div>
     <div class="card">
       <div class="label">MY ACTIVE TRIPS <span id="myCount" style="background:rgba(16,185,129,.15);color:#6EE7B7;padding:2px 8px;border-radius:999px;margin-left:6px">0</span></div>
-      <div id="myTrips"><div class="small" style="text-align:center;padding:20px;border:1px dashed rgba(255,255,255,.1);border-radius:12px">No active trips. Stay ONLINE.</div></div>
+      <div id="myTrips"><div class="small" style="text-align:center;padding:20px;border:1px dashed rgba(255,255,255,.1);border-radius:12px">No active trips. Stay online - orders blast instantly.</div></div>
     </div>
     <div class="card">
       <div class="label">COMPLETE WITH OTP</div>
@@ -63,8 +61,9 @@ body{background:var(--bg);color:#fff;font-family:Inter,sans-serif;min-height:100
       </div>
       <div id="verifyMsg" class="small" style="margin-top:8px;text-align:center"></div>
     </div>
+    <div class="card" style="opacity:.7"><div class="label">LIVE FIRESTORE (debug)</div><div id="liveList" class="small" style="max-height:120px;overflow:auto"></div></div>
   </div>
-  <div class="footer"><span>Direct Dispatch • floot-delivery</span><span>FLOOT NG</span></div>
+  <div class="footer"><span>Realtime • Direct Dispatch • floot-delivery</span><span>FLOOT NG</span></div>
 </div>
 
 <div id="incomingOverlay" class="incoming-overlay">
@@ -80,11 +79,13 @@ body{background:var(--bg);color:#fff;font-family:Inter,sans-serif;min-height:100
     </div>
     <div class="small" id="inDesc" style="margin-top:12px;background:rgba(255,255,255,.05);padding:8px 10px;border-radius:10px">Parcel</div>
     <div class="action-grid"><button id="declineBtn" class="btn btn-danger">DECLINE</button><button id="acceptBtn" class="btn btn-primary">ACCEPT ORDER</button></div>
-    <div class="small" style="text-align:center;margin-top:10px">If another driver accepts first, this disappears</div>
+    <div class="small" style="text-align:center;margin-top:10px">If another driver accepts first, this disappears automatically</div>
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBVIJq5napb_egiLdKhGtySZoPeLUkY9Q4",
   authDomain: "floot-delivery.firebaseapp.com",
@@ -93,72 +94,47 @@ const firebaseConfig = {
   messagingSenderId: "786230599434",
   appId: "1:786230599434:web:e1913bd8c2e69a7e1c64f3"
 };
-const FS_BASE = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents`;
-const FS_COL = "delivery_requests";
-const API_KEY = firebaseConfig.apiKey;
 let DRIVER_ID = localStorage.getItem("floot_driver_id");
-if(!DRIVER_ID){ DRIVER_ID = "DRV_"+Math.random().toString(36).slice(2,8).toUpperCase(); localStorage.setItem("floot_driver_id", DRIVER_ID); }
+if(!DRIVER_ID){ DRIVER_ID = "DRV_"+Math.random().toString(36).slice(2,6).toUpperCase(); localStorage.setItem("floot_driver_id", DRIVER_ID); }
 document.getElementById("driverId").textContent="ID: "+DRIVER_ID;
-let allData=[], online=true, earnings=parseInt(localStorage.getItem("floot_earn")||"0"), trips=parseInt(localStorage.getItem("floot_trips")||"0");
-let seenIds = new Set(JSON.parse(localStorage.getItem("floot_seen")||"[]"));
-let currentIncoming=null, countdownTimer=null, secondsLeft=25;
+let earnings=parseInt(localStorage.getItem("floot_earn")||"0"), trips=parseInt(localStorage.getItem("floot_trips")||"0");
 document.getElementById("earnings").textContent="₦"+earnings.toLocaleString();
 document.getElementById("tripsToday").textContent=trips+" trips";
-document.getElementById("onlineBtn").addEventListener("click", ()=>{
-  online=!online;
-  const btn=document.getElementById("onlineBtn");
-  if(online){ btn.className="online-toggle on"; btn.textContent="ONLINE"; document.getElementById("statusText").textContent="Waiting for orders..."; }
-  else { btn.className="online-toggle"; btn.textContent="OFFLINE"; document.getElementById("statusText").textContent="OFFLINE"; hideIncoming(); }
+let allData=[], currentIncoming=null, countdownTimer=null, secondsLeft=25;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const q = query(collection(db, "delivery_requests"), orderBy("createdAt","desc"), limit(50));
+onSnapshot(q, (snapshot)=>{
+  document.getElementById("conn").textContent="CONNECTED ("+snapshot.size+")";
+  document.getElementById("conn").style.color="#6EE7B7";
+  allData = snapshot.docs.map(d=> ({id:d.id,...d.data()}));
+  const searching = allData.filter(d=>d.status==="searching" &&!d.driverId);
+  document.getElementById("debugCount").textContent = searching.length+" searching, "+allData.length+" total";
+  document.getElementById("liveList").innerHTML = allData.slice(0,5).map(r=>`${r.pickup||"?"} → ${r.dropoff||"?"} [${r.status}] ₦${r.offerAmount||0}`).join("<br>") || "No docs";
+  if(currentIncoming){
+    const still = allData.find(d=>d.id===currentIncoming.id && d.status==="searching");
+    if(!still){ hideIncoming(); }
+  }
+  if(searching.length>0 &&!currentIncoming){ showIncoming(searching[0]); }
+  renderMyTrips();
+}, (err)=>{
+  document.getElementById("conn").textContent="ERROR: "+err.message;
+  document.getElementById("conn").style.color="#F87171";
 });
-function fromDoc(doc){
-  try{
-    const id=doc.name.split("/").pop();
-    const f=doc.fields||{};
-    const get=(k,d="")=>{ const v=f[k]; if(!v) return d; if(v.stringValue!==undefined) return v.stringValue; if(v.integerValue!==undefined) return parseInt(v.integerValue,10); if(v.doubleValue!==undefined) return v.doubleValue; return d; };
-    return { id, docName:doc.name, pickup:get("pickup"), dropoff:get("dropoff"), distance:Number(get("distance",0)), itemType:get("itemType","Parcel"), description:get("description",""), offerAmount:Number(get("offerAmount",0)), status:get("status","searching"), otp:get("otp",""), driverId:get("driverId",""), createTime:doc.createTime };
-  }catch{ return null; }
-}
-async function fetchAll(){
-  try{
-    const url=`${FS_BASE}/${FS_COL}?key=${API_KEY}&pageSize=50&orderBy=createTime%20desc`;
-    const res=await fetch(url);
-    const json=await res.json();
-    if(json.documents){
-      const docs=json.documents.map(fromDoc).filter(Boolean);
-      if(online){
-        const newSearching = docs.filter(d=>d.status==="searching" &&!seenIds.has(d.id));
-        if(newSearching.length>0 &&!currentIncoming){
-          const newest = newSearching.sort((a,b)=> new Date(b.createTime) - new Date(a.createTime))[0];
-          const ageSec = (Date.now() - new Date(newest.createTime).getTime())/1000;
-          if(ageSec < 120){ showIncoming(newest); } else { newSearching.forEach(d=>seenIds.add(d.id)); }
-        }
-      }
-      if(currentIncoming){
-        const stillExists = docs.find(d=>d.id===currentIncoming.id);
-        if(!stillExists || stillExists.status!=="searching"){ hideIncoming(); }
-      }
-      allData=docs;
-      document.getElementById("conn").textContent="CONNECTED";
-      renderMyTrips();
-      localStorage.setItem("floot_seen", JSON.stringify(Array.from(seenIds).slice(-100)));
-    }
-  }catch(e){ document.getElementById("conn").textContent="RETRYING"; }
-}
 function renderMyTrips(){
   const mine = allData.filter(r=>r.driverId===DRIVER_ID && r.status==="accepted");
   document.getElementById("myCount").textContent=mine.length;
   if(mine.length===0){
-    document.getElementById("myTrips").innerHTML=`<div class="small" style="text-align:center;padding:20px;border:1px dashed rgba(255,255,255,.1);border-radius:12px">No active trips. Stay ONLINE.</div>`;
+    document.getElementById("myTrips").innerHTML=`<div class="small" style="text-align:center;padding:20px;border:1px dashed rgba(255,255,255,.1);border-radius:12px">No active trips. Stay online.</div>`;
   } else {
     document.getElementById("myTrips").innerHTML=mine.map(r=>`<div class="req"><div style="display:flex;justify-content:space-between"><span style="font-size:9px;font-weight:900;padding:4px 8px;border-radius:999px;background:rgba(16,185,129,.12);color:#6EE7B7;border:1px solid rgba(16,185,129,.2)">${r.status.toUpperCase()}</span><span class="small">OTP: ${r.otp}</span></div><div style="margin-top:8px;font-weight:600">${r.pickup} → ${r.dropoff}</div><div style="margin-top:6px;display:flex;justify-content:space-between"><span class="small">EARN</span><b style="color:#6EE7B7">₦${(r.offerAmount||0).toLocaleString()}</b></div></div>`).join("");
   }
 }
 function showIncoming(order){
-  if(!online) return;
   currentIncoming=order;
   document.getElementById("inPickup").textContent=order.pickup;
   document.getElementById("inDropoff").textContent=order.dropoff;
-  document.getElementById("inDistance").textContent=order.distance+" km";
+  document.getElementById("inDistance").textContent=(order.distance||0)+" km";
   document.getElementById("inOffer").textContent="₦"+(order.offerAmount||0).toLocaleString();
   document.getElementById("inDesc").textContent= (order.itemType||"Parcel") + " - " + (order.description||"");
   document.getElementById("incomingOverlay").classList.add("show");
@@ -170,59 +146,54 @@ function showIncoming(order){
     secondsLeft--;
     document.getElementById("countdown").textContent=secondsLeft+"s";
     document.getElementById("timerFill").style.width=(secondsLeft/25*100)+"%";
-    if(secondsLeft<=0){ hideIncoming(); seenIds.add(order.id); }
+    if(secondsLeft<=0) hideIncoming();
   }, 1000);
   if(navigator.vibrate) navigator.vibrate([300,100,300,100,500]);
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator(); const gain=ctx.createGain();
+    osc.frequency.value=880; osc.connect(gain); gain.connect(ctx.destination);
+    gain.gain.value=0.3; osc.start(); setTimeout(()=>{osc.stop(); ctx.close();},300);
+  }catch{}
 }
 function hideIncoming(){
   document.getElementById("incomingOverlay").classList.remove("show");
   if(countdownTimer) clearInterval(countdownTimer);
-  if(currentIncoming) seenIds.add(currentIncoming.id);
   currentIncoming=null;
 }
-document.getElementById("declineBtn").addEventListener("click", ()=>{ hideIncoming(); });
+document.getElementById("declineBtn").addEventListener("click", hideIncoming);
 document.getElementById("acceptBtn").addEventListener("click", async ()=>{
   if(!currentIncoming) return;
-  const order=currentIncoming;
-  document.getElementById("acceptBtn").textContent='CLAIMING...';
+  const id=currentIncoming.id;
+  document.getElementById("acceptBtn").textContent="CLAIMING...";
   try{
-    const patchUrl=`${FS_BASE}/${order.docName.split('documents/')[1]}?key=${API_KEY}&updateMask.fieldPaths=status&updateMask.fieldPaths=driverId`;
-    const body={ fields:{ status:{stringValue:"accepted"}, driverId:{stringValue:DRIVER_ID} } };
-    await fetch(patchUrl,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    await new Promise(r=>setTimeout(r,600));
-    const singleUrl=`${FS_BASE}/${order.docName.split('documents/')[1]}?key=${API_KEY}`;
-    const verifyRes=await fetch(singleUrl);
-    const verifyJson=await verifyRes.json();
-    const vDriver = verifyJson.fields?.driverId?.stringValue;
-    if(vDriver===DRIVER_ID){ hideIncoming(); document.getElementById("statusText").textContent="Order accepted!"; fetchAll(); }
-    else { hideIncoming(); alert("Too slow! Another driver took it."); fetchAll(); }
-  }catch(e){ hideIncoming(); alert("Already taken"); fetchAll(); }
-  document.getElementById("acceptBtn").textContent='ACCEPT ORDER';
+    const ref=doc(db, "delivery_requests", id);
+    await updateDoc(ref, { status:"accepted", driverId: DRIVER_ID });
+    document.getElementById("statusText").textContent="Order accepted! Go to pickup";
+    hideIncoming();
+  }catch(e){
+    alert("Too slow! Another driver took it: "+e.message);
+    hideIncoming();
+  }
+  document.getElementById("acceptBtn").textContent="ACCEPT ORDER";
 });
-async function patchDoc(docPath, fields){
-  const url=`${FS_BASE}/${docPath}?key=${API_KEY}&${Object.keys(fields).map(k=>`updateMask.fieldPaths=${k}`).join('&')}`;
-  const body={ fields:{} };
-  for(const [k,v] of Object.entries(fields)){ body.fields[k]={stringValue:v}; }
-  return fetch(url,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(r=>r.json());
-}
 document.getElementById("verifyBtn").addEventListener("click", async ()=>{
   const otp=document.getElementById("otpInput").value.trim();
   if(otp.length!==4) return document.getElementById("verifyMsg").textContent="Enter 4-digit OTP";
   const match = allData.find(r=>r.driverId===DRIVER_ID && r.otp===otp && r.status==="accepted");
   if(!match){ document.getElementById("verifyMsg").innerHTML="<span style='color:#F87171'>❌ OTP not found</span>"; return; }
-  const docPath=match.docName.split('documents/')[1];
-  await patchDoc(docPath, { status:"delivered" });
-  earnings+=match.offerAmount; trips+=1;
-  localStorage.setItem("floot_earn", String(earnings));
-  localStorage.setItem("floot_trips", String(trips));
-  document.getElementById("earnings").textContent="₦"+earnings.toLocaleString();
-  document.getElementById("tripsToday").textContent=trips+" trips";
-  document.getElementById("verifyMsg").innerHTML=`<span style='color:#6EE7B7'>✓ Delivered! +₦${match.offerAmount.toLocaleString()}</span>`;
-  document.getElementById("otpInput").value="";
-  fetchAll();
+  try{
+    const ref=doc(db, "delivery_requests", match.id);
+    await updateDoc(ref, { status:"delivered" });
+    earnings+=match.offerAmount; trips+=1;
+    localStorage.setItem("floot_earn", String(earnings));
+    localStorage.setItem("floot_trips", String(trips));
+    document.getElementById("earnings").textContent="₦"+earnings.toLocaleString();
+    document.getElementById("tripsToday").textContent=trips+" trips";
+    document.getElementById("verifyMsg").innerHTML=`<span style='color:#6EE7B7'>✓ Delivered! +₦${match.offerAmount.toLocaleString()}</span>`;
+    document.getElementById("otpInput").value="";
+  }catch(e){ document.getElementById("verifyMsg").textContent="Error: "+e.message; }
 });
-fetchAll();
-setInterval(fetchAll, 2000);
 </script>
 </body>
 </html>
