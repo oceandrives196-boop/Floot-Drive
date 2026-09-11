@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Floot NG Driver - White Purple</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--purple:#7C3AED;--purple2:#A78BFA;--purple3:#EDE9FE;--purpleDark:#5B21B6;--white:#FFFFFF;--gray:#F5F3FF;--text:#1F1A2E;--muted:#6B7280}
@@ -19,7 +20,6 @@ body{background:var(--white);color:var(--text);font-family:Inter,system-ui,sans-
 .input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--purple2);font-size:14px}
 .btn{width:100%;border:none;border-radius:14px;padding:14px;font-weight:800;font-size:14px;cursor:pointer;transition:.2s}
 .btn-primary{background:linear-gradient(90deg,#7C3AED,#8B5CF6);color:#fff;box-shadow:0 8px 20px rgba(124,58,237,.25)}
-.btn-primary:active{transform:scale(.98)}
 .btn-ghost{background:#F5F3FF;color:var(--purple);border:1px solid #EDE9FE}
 .tabs{display:flex;background:#F5F3FF;border-radius:12px;padding:4px;margin-bottom:20px}
 .tab{flex:1;padding:10px;border-radius:10px;text-align:center;font-weight:800;font-size:13px;cursor:pointer;color:var(--muted)}
@@ -34,7 +34,6 @@ body{background:var(--white);color:var(--text);font-family:Inter,system-ui,sans-
 .switch.on.knob{left:19px}
 .main{padding:16px;display:flex;flex-direction:column;gap:16px;flex:1;background:#FBFAFF}
 .hero{background:linear-gradient(135deg,#7C3AED 0%, #A78BFA 100%);border-radius:24px;padding:18px;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:rgba(255,255,255,.15);border-radius:50%}
 .mini-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
 .mini{background:rgba(255,255,255,.18);backdrop-filter:blur(10px);border-radius:14px;padding:10px;text-align:center;border:1px solid rgba(255,255,255,.2)}
 .card{background:#fff;border:1px solid #F3F0FF;border-radius:20px;padding:16px;box-shadow:0 4px 20px rgba(124,58,237,.06)}
@@ -46,10 +45,14 @@ body{background:var(--white);color:var(--text);font-family:Inter,system-ui,sans-
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;color:#9CA3AF;cursor:pointer}
 .nav-item.active{color:#7C3AED}
 .nav-icon{width:28px;height:28px;border-radius:10px;display:grid;place-items:center}
-.nav-item.active.nav-icon{background:#EDE9FE}
 .incoming{position:fixed;inset:0;z-index:9999;background:#fff;display:none;flex-direction:column}
 .incoming.show{display:flex}
-.map-box{height:200px;background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-radius:0 0 24px 24px;position:relative;display:grid;place-items:center;border-bottom:1px solid #EDE9FE}
+#osmMap{width:100%;height:100%;background:#F5F3FF;z-index:1}
+.compass-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;pointer-events:none;text-align:center}
+.arrow-circle{width:120px;height:120px;border-radius:50%;background:rgba(124,58,237,.12);border:3px solid #7C3AED;display:grid;place-items:center;margin:0 auto;position:relative;box-shadow:0 8px 30px rgba(124,58,237,.25)}
+.arrow{font-size:48px;color:#7C3AED;transition:transform.3s ease}
+.distance-badge{background:#1F1A2E;color:#fff;padding:8px 14px;border-radius:999px;font-weight:800;font-size:13px;margin-top:10px;display:inline-flex;gap:6px;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+@keyframes pulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
 </style>
 </head>
 <body>
@@ -57,7 +60,7 @@ body{background:var(--white);color:var(--text);font-family:Inter,system-ui,sans-
 <div id="authScreen" class="auth-bg">
   <div style="text-align:center;color:#fff;margin-bottom:20px">
     <div class="logo-big"><i class="fa-solid fa-motorcycle"></i></div>
-    <div style="font-weight:900;font-size:22px;letter-spacing:.04em">FLOOT NG</div>
+    <div style="font-weight:900;font-size:22px">FLOOT NG</div>
     <div style="opacity:.8;font-size:13px;margin-top:4px">Driver Partner App • White Purple</div>
   </div>
   <div class="auth-card">
@@ -73,12 +76,12 @@ body{background:var(--white);color:var(--text);font-family:Inter,system-ui,sans-
       <div class="input-wrap"><i class="fa-solid fa-phone"></i><input id="regPhone" class="input" placeholder="Phone (080...)"></div>
       <div class="input-wrap"><i class="fa-solid fa-envelope"></i><input id="regEmail" class="input" type="email" placeholder="Email"></div>
       <div class="input-wrap"><i class="fa-solid fa-lock"></i><input id="regPass" class="input" type="password" placeholder="Password (min 6)"></div>
-      <div class="input-wrap"><i class="fa-solid fa-motorcycle"></i><input id="regBike" class="input" placeholder="Bike Number (e.g. ABC 123)"></div>
+      <div class="input-wrap"><i class="fa-solid fa-motorcycle"></i><input id="regBike" class="input" placeholder="Bike Number"></div>
       <div class="input-wrap"><i class="fa-solid fa-id-card"></i><input id="regNIN" class="input" placeholder="NIN (optional)"></div>
       <button id="regBtn" class="btn btn-primary" style="margin-top:6px">CREATE DRIVER ACCOUNT</button>
       <div id="regMsg" class="small" style="text-align:center;margin-top:10px;min-height:16px"></div>
     </div>
-    <div style="margin-top:16px;text-align:center" class="small">Your account works on <b>all devices</b> • Same email/password everywhere</div>
+    <div style="margin-top:16px;text-align:center" class="small">Works on <b>all devices</b> • Same login everywhere</div>
   </div>
 </div>
 
@@ -105,15 +108,7 @@ body{background:var(--white);color:var(--text);font-family:Inter,system-ui,sans-
     </div>
     <div class="card">
       <div class="label"><span>ACTIVE DELIVERY <span id="activeCount" style="background:#ECFDF5;color:#10B981;padding:2px 8px;border-radius:999px">0</span></span></div>
-      <div id="activeBox"><div class="empty"><div style="width:48px;height:48px;border-radius:14px;background:#EDE9FE;display:grid;place-items:center;margin:0 auto 10px;color:#7C3AED"><i class="fa-solid fa-motorcycle"></i></div><div style="font-weight:700;font-size:13px;color:#1F1A2E">No active delivery</div><div class="small" style="margin-top:4px">Stay online — orders blast to all devices instantly</div></div></div>
-    </div>
-    <div class="card">
-      <div class="label"><span>COMPLETE WITH OTP</span><span class="small">From customer</span></div>
-      <div style="display:flex;gap:10px">
-        <input id="otpInput" placeholder="• • • •" maxlength="4" inputmode="numeric" style="flex:1;background:#F5F3FF;border:1px solid #EDE9FE;border-radius:14px;padding:14px;text-align:center;letter-spacing:.6em;font-size:18px;font-weight:800;outline:none">
-        <button id="verifyBtn" class="btn btn-primary" style="width:110px">VERIFY</button>
-      </div>
-      <div id="verifyMsg" class="small" style="text-align:center;margin-top:8px;min-height:16px"></div>
+      <div id="activeBox"><div class="empty"><div style="width:48px;height:48px;border-radius:14px;background:#EDE9FE;display:grid;place-items:center;margin:0 auto 10px;color:#7C3AED"><i class="fa-solid fa-motorcycle"></i></div><div style="font-weight:700;font-size:13px;color:#1F1A2E">No active delivery</div><div class="small" style="margin-top:4px">Stay online — orders blast to all devices</div></div></div>
     </div>
   </div>
   <div class="nav">
@@ -124,18 +119,16 @@ body{background:var(--white);color:var(--text);font-family:Inter,system-ui,sans-
   </div>
 </div>
 
+<!-- INCOMING ORDER POPUP -->
 <div id="incoming" class="incoming">
-  <div class="map-box">
-    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><div style="width:2px;height:60%;background:linear-gradient(180deg,#7C3AED,#A78BFA);border-radius:2px"></div></div>
-    <div style="position:absolute;top:18%;background:#fff;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.1);border:1px solid #F3F0FF" id="mapPickup">Pickup</div>
-    <div style="position:absolute;bottom:18%;background:#7C3AED;color:#fff;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:800" id="mapDropoff">Dropoff</div>
-    <div style="background:#fff;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;box-shadow:0 8px 20px rgba(124,58,237,.2);border:2px solid #EDE9FE;z-index:2"><i class="fa-solid fa-motorcycle" style="color:#7C3AED"></i></div>
-  </div>
-  <div style="padding:18px;flex:1;overflow:auto">
-    <div style="text-align:center"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;color:#7C3AED">NEW REQUEST • FIRST TO ACCEPT WINS</div><div style="font-size:20px;font-weight:900;margin-top:6px;color:#1F1A2E" id="inTitle">Ikeja → Lekki</div><div style="margin-top:8px"><span style="background:#FEF3C7;color:#92400E;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:800" id="countdown">25s left</span></div></div>
-    <div class="card" style="margin-top:18px">
+  <div style="flex:1;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center;background:linear-gradient(180deg,#FAF7FF,#FFFFFF)">
+    <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#A78BFA);display:grid;place-items:center;box-shadow:0 0 0 10px rgba(124,58,237,.12)"><i class="fa-solid fa-bell" style="color:#fff;font-size:28px"></i></div>
+    <div style="margin-top:16px;font-size:11px;font-weight:800;letter-spacing:.14em;color:#7C3AED">NEW REQUEST • FIRST TO ACCEPT WINS</div>
+    <div style="font-size:22px;font-weight:900;margin-top:6px;color:#1F1A2E" id="inTitle">Ikeja → Lekki</div>
+    <div style="margin-top:8px"><span id="countdown" style="background:#FEF3C7;color:#92400E;padding:6px 12px;border-radius:999px;font-weight:800;font-size:12px">25s left</span></div>
+    <div class="card" style="width:100%;max-width:380px;margin-top:24px">
       <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
-        <div><div class="small">PICKUP</div><b id="inPickup" style="font-size:14px;display:block;margin-top:4px;color:#1F1A2E">Ikeja Mall</b></div>
+        <div><div class="small">PICKUP</div><b id="inPickup" style="font-size:14px;display:block;margin-top:4px;color:#1F1A2E">Ketu</b></div>
         <div style="width:36px;height:36px;border-radius:50%;background:#F5F3FF;display:grid;place-items:center;color:#A78BFA"><i class="fa-solid fa-arrow-right"></i></div>
         <div><div class="small">DROPOFF</div><b id="inDropoff" style="font-size:14px;display:block;margin-top:4px;color:#1F1A2E">Lekki</b></div>
       </div>
@@ -143,15 +136,65 @@ body{background:var(--white);color:var(--text);font-family:Inter,system-ui,sans-
         <div style="background:#F5F3FF;border-radius:14px;padding:12px"><div class="small">Distance</div><b id="inDistance" style="font-size:16px;color:#1F1A2E">5.2 km</b></div>
         <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:14px;padding:12px"><div class="small" style="color:#10B981">You earn</div><b id="inOffer" style="font-size:18px;color:#059669">₦2,800</b></div>
       </div>
-      <div id="inDesc" style="margin-top:12px;background:#F5F3FF;padding:10px 12px;border-radius:12px;font-size:12px;color:#4B5563">Small parcel</div>
-      <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:10px;margin-top:16px"><button id="declineBtn" class="btn btn-ghost">Decline</button><button id="acceptBtn" class="btn btn-primary" style="font-size:15px">ACCEPT • <span id="inOffer2">₦2,800</span></button></div>
+      <div id="inDesc" style="margin-top:12px;background:#F5F3FF;padding:10px 12px;border-radius:12px;font-size:12px;color:#4B5563">Food • No description</div>
+      <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:10px;margin-top:16px"><button id="declineBtn" class="btn btn-ghost">Decline</button><button id="acceptBtn" class="btn btn-primary">ACCEPT • <span id="inOffer2">₦2,800</span></button></div>
     </div>
   </div>
 </div>
 
+<!-- NAVIGATION PAGE - OSM + COMPASS (NO GOOGLE BLOCK) -->
+<div id="navPage" style="position:fixed;inset:0;z-index:9998;background:#fff;display:none;flex-direction:column">
+  <div style="background:#fff;border-bottom:1px solid #F3F0FF;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+    <div style="display:flex;gap:10px;align-items:center"><button id="backFromNav" style="width:36px;height:36px;border-radius:10px;border:1px solid #F3F0FF;background:#F5F3FF"><i class="fa-solid fa-arrow-left" style="color:#7C3AED"></i></button><div><div id="navStage" style="font-size:11px;font-weight:800;letter-spacing:.1em;color:#7C3AED">STAGE 1: GO TO PICKUP</div><div id="navTitle" style="font-weight:800;font-size:14px;color:#1F1A2E;margin-top:2px">Ketu</div></div></div>
+    <div style="background:#ECFDF5;color:#065F46;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800"><span id="navDistance">--km</span> • <span id="navTime">--</span></div>
+  </div>
+  <div style="flex:1;position:relative;overflow:hidden">
+    <div id="osmMap"></div>
+    <div id="compassOverlay" class="compass-wrap">
+      <div class="arrow-circle"><div id="directionArrow" class="arrow"><i class="fa-solid fa-location-arrow"></i></div></div>
+      <div id="distanceBadge" class="distance-badge"><i class="fa-solid fa-route"></i> <span id="compassDist">Calculating...</span></div>
+      <div style="margin-top:8px;background:rgba(255,255,255,.9);padding:6px 12px;border-radius:10px;font-size:11px;font-weight:700;color:#1F1A2E;box-shadow:0 2px 8px rgba(0,0,0,.1)"><span id="compassDir">Getting direction...</span></div>
+    </div>
+    <div style="position:absolute;top:12px;left:12px;right:12px;z-index:400;display:flex;justify-content:space-between;pointer-events:none">
+      <div style="pointer-events:auto;background:#1F1A2E;color:#fff;padding:8px 12px;border-radius:12px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;background:#10B981;border-radius:50%;animation:pulse 2s infinite"></div> <span id="driverLoc">Getting location...</span></div>
+      <button id="recenterBtn" style="pointer-events:auto;background:#fff;border:1px solid #EDE9FE;border-radius:10px;padding:8px 10px;font-size:11px;font-weight:800;color:#7C3AED;box-shadow:0 4px 12px rgba(0,0,0,.08)"><i class="fa-solid fa-crosshairs"></i> Recenter</button>
+    </div>
+    <div style="position:absolute;bottom:12px;left:12px;z-index:400;background:rgba(255,255,255,.95);border:1px solid #F3F0FF;border-radius:12px;padding:8px 12px;box-shadow:0 4px 12px rgba(0,0,0,.08)">
+      <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8B8BA7">DIRECTION</div>
+      <div id="bearingText" style="font-weight:800;font-size:12px;color:#1F1A2E">Calculating...</div>
+      <div id="addressText" class="small" style="font-size:10px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Ketu, Lagos</div>
+    </div>
+  </div>
+  <div style="background:#fff;border-top:1px solid #F3F0FF;padding:16px;border-radius:24px 24px 0 0;margin-top:-20px;position:relative;z-index:500;box-shadow:0 -8px 30px rgba(0,0,0,.06)">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+      <div id="navIcon" style="width:44px;height:44px;border-radius:12px;background:#EDE9FE;display:grid;place-items:center;color:#7C3AED"><i class="fa-solid fa-box"></i></div>
+      <div style="flex:1"><div id="navAddrLabel" class="small" style="font-weight:800;letter-spacing:.08em;color:#8B8BA7">PICKUP ADDRESS</div><b id="navAddr" style="font-size:14px;color:#1F1A2E;display:block;margin-top:2px">Ketu</b><div id="navCustomer" class="small" style="margin-top:2px">Item: Food</div></div>
+    </div>
+    <div id="navActionPickup">
+      <button id="openMapsPickup" class="btn btn-primary" style="background:#1F1A2E"><i class="fa-solid fa-diamond-turn-right"></i> OPEN IN MAPS APP (Voice)</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+        <button id="callCustomerBtn" class="btn btn-ghost"><i class="fa-solid fa-phone"></i> Call</button>
+        <button id="pickedUpBtn" class="btn btn-primary" style="background:linear-gradient(90deg,#10B981,#34D399)">✓ PICKED UP</button>
+      </div>
+    </div>
+    <div id="navActionDropoff" style="display:none">
+      <button id="openMapsDrop" class="btn btn-primary" style="background:#1F1A2E"><i class="fa-solid fa-diamond-turn-right"></i> NAVIGATE TO DESTINATION</button>
+      <div style="margin-top:12px;background:#FAF7FF;border:1px solid #EDE9FE;border-radius:14px;padding:12px">
+        <div class="small" style="font-weight:800;letter-spacing:.08em">ENTER OTP FROM CUSTOMER</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input id="navOtpInput" placeholder="• • • •" maxlength="4" inputmode="numeric" style="flex:1;background:#fff;border:1px solid #EDE9FE;border-radius:12px;padding:12px;text-align:center;letter-spacing:.5em;font-weight:800;font-size:16px">
+          <button id="navVerifyBtn" class="btn btn-primary" style="width:100px">VERIFY</button>
+        </div>
+        <div id="navOtpMsg" class="small" style="text-align:center;margin-top:6px;min-height:16px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, query, orderBy, limit, onSnapshot, doc, updateDoc, setDoc, getDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBVIJq5napb_egiLdKhGtySZoPeLUkY9Q4",
   authDomain: "floot-delivery.firebaseapp.com",
@@ -162,12 +205,119 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
 let currentUser=null, allData=[], currentOrder=null, timer=null, sec=25, isOnline=true;
-let earnings=0, trips=0;
-const saved = JSON.parse(localStorage.getItem("floot_driver_session")||"null");
-if(saved){ loginWithProfile(saved); }
-function showLogin(){ document.getElementById("authScreen").style.display="flex"; document.getElementById("mainApp").style.display="none"; }
-function showMain(){ document.getElementById("authScreen").style.display="none"; document.getElementById("mainApp").style.display="flex"; }
+let navOrder=null, navStage='pickup';
+let driverCoords=null;
+let osmMap=null, driverMarker=null, targetMarker=null, routeLine=null;
+
+// Direction helpers
+function toRad(d){return d*Math.PI/180}
+function toDeg(r){return r*180/Math.PI}
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371;
+  const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1);
+  const a=Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  return R*c;
+}
+function bearing(lat1,lon1,lat2,lon2){
+  const dLon=toRad(lon2-lon1);
+  const y=Math.sin(dLon)*Math.cos(toRad(lat2));
+  const x=Math.cos(toRad(lat1))*Math.sin(toRad(lat2)) - Math.sin(toRad(lat1))*Math.cos(toRad(lat2))*Math.cos(dLon);
+  let brng=toDeg(Math.atan2(y,x));
+  brng=(brng+360)%360;
+  return brng;
+}
+function bearingToText(brng){
+  const dirs=['North','North-East','East','South-East','South','South-West','West','North-West'];
+  const idx=Math.round(brng/45)%8;
+  return 'Head '+dirs[idx];
+}
+function initOsmMap(){
+  if(osmMap) return;
+  osmMap = L.map('osmMap', {zoomControl:false}).setView([6.5244, 3.3792], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap', maxZoom:19}).addTo(osmMap);
+}
+function geocodeAddress(address, callback){
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address+', Lagos, Nigeria')}&limit=1`)
+   .then(r=>r.json()).then(data=>{
+      if(data && data.length>0){
+        callback({lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), display: data[0].display_name});
+      } else {
+        const offset=0.02;
+        const fallback = driverCoords? {lat: driverCoords.lat + offset, lng: driverCoords.lng + offset, display: address} : {lat:6.5244,lng:3.3792,display:address};
+        callback(fallback);
+      }
+    }).catch(()=> callback({lat:6.6,lng:3.35, display:address}));
+}
+function updateDirection(){
+  if(!navOrder ||!driverCoords) return;
+  const targetAddr = navStage==='pickup'? navOrder.pickup : navOrder.dropoff;
+  geocodeAddress(targetAddr, (target)=>{
+    const dist = haversine(driverCoords.lat, driverCoords.lng, target.lat, target.lng);
+    const brng = bearing(driverCoords.lat, driverCoords.lng, target.lat, target.lng);
+    document.getElementById("navDistance").textContent=dist.toFixed(1)+'km';
+    document.getElementById("navTime").textContent=Math.round(dist*4)+' min';
+    document.getElementById("compassDist").textContent=dist.toFixed(1)+' km away';
+    document.getElementById("bearingText").textContent=bearingToText(brng);
+    document.getElementById("compassDir").textContent=bearingToText(brng)+' • '+Math.round(brng)+'°';
+    document.getElementById("addressText").textContent=target.display.slice(0,60);
+    document.getElementById("directionArrow").style.transform=`rotate(${brng}deg)`;
+    if(targetMarker) osmMap.removeLayer(targetMarker);
+    targetMarker=L.marker([target.lat, target.lng], {icon: L.divIcon({html:'<div style="background:#7C3AED;color:#fff;padding:6px 10px;border-radius:999px;font-weight:800;font-size:11px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.2)">📍 '+(navStage==='pickup'?'PICKUP':'DROP')+'</div>', iconSize:[80,24]})}).addTo(osmMap);
+    if(routeLine) osmMap.removeLayer(routeLine);
+    routeLine=L.polyline([[driverCoords.lat, driverCoords.lng],[target.lat, target.lng]], {color:'#7C3AED', weight:4, dashArray:'8,8', opacity:.7}).addTo(osmMap);
+    const bounds=L.latLngBounds([[driverCoords.lat, driverCoords.lng],[target.lat, target.lng]]);
+    osmMap.fitBounds(bounds, {padding:[60,60]});
+    if(dist<0.5){ document.getElementById("compassOverlay").style.opacity='0.15'; } else { document.getElementById("compassOverlay").style.opacity='1'; }
+  });
+}
+function updateDriverLocation(){
+  if(!navigator.geolocation){ document.getElementById("driverLoc").textContent="GPS not supported"; return; }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    driverCoords={lat: pos.coords.latitude, lng: pos.coords.longitude};
+    document.getElementById("driverLoc").textContent=driverCoords.lat.toFixed(4)+', '+driverCoords.lng.toFixed(4);
+    initOsmMap();
+    if(!driverMarker){
+      driverMarker=L.marker([driverCoords.lat, driverCoords.lng], {icon: L.divIcon({html:'<div style="width:18px;height:18px;background:#10B981;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>', iconSize:[18,18]})}).addTo(osmMap);
+    } else { driverMarker.setLatLng([driverCoords.lat, driverCoords.lng]); }
+    if(navOrder){ updateDirection(); } else { osmMap.setView([driverCoords.lat, driverCoords.lng], 15); }
+  }, err=>{
+    document.getElementById("driverLoc").textContent="Location off";
+    driverCoords={lat:6.5244,lng:3.3792}; initOsmMap(); if(navOrder) updateDirection();
+  }, {enableHighAccuracy:true, timeout:8000});
+}
+function openNavigationPage(order){
+  navOrder=order; navStage='pickup';
+  document.getElementById("navPage").style.display='flex';
+  document.getElementById("navStage").textContent='STAGE 1: GO TO PICKUP';
+  document.getElementById("navTitle").textContent=order.pickup;
+  document.getElementById("navAddrLabel").textContent='PICKUP ADDRESS';
+  document.getElementById("navAddr").textContent=order.pickup;
+  document.getElementById("navCustomer").textContent='Item: '+(order.itemType||'Parcel')+' • '+(order.description||'');
+  document.getElementById("navIcon").innerHTML='<i class="fa-solid fa-box"></i>';
+  document.getElementById("navActionPickup").style.display='block';
+  document.getElementById("navActionDropoff").style.display='none';
+  setTimeout(()=>{ initOsmMap(); updateDriverLocation(); if(osmMap) osmMap.invalidateSize(); }, 300);
+}
+function switchToDropoff(){
+  if(!navOrder) return; navStage='dropoff';
+  document.getElementById("navStage").textContent='STAGE 2: GO TO DESTINATION';
+  document.getElementById("navTitle").textContent=navOrder.dropoff;
+  document.getElementById("navAddrLabel").textContent='DELIVERY ADDRESS';
+  document.getElementById("navAddr").textContent=navOrder.dropoff;
+  document.getElementById("navCustomer").textContent='OTP: '+navOrder.otp+' • Ask customer';
+  document.getElementById("navIcon").innerHTML='<i class="fa-solid fa-location-dot"></i>';
+  document.getElementById("navIcon").style.background='#D1FAE5';
+  document.getElementById("navIcon").style.color='#065F46';
+  document.getElementById("navActionPickup").style.display='none';
+  document.getElementById("navActionDropoff").style.display='block';
+  updateDirection();
+}
+function hideIncoming(){ document.getElementById("incoming").classList.remove("show"); if(timer) clearInterval(timer); currentOrder=null; }
+
+// Auth tabs
 document.getElementById("loginTab").onclick=()=>{
   document.getElementById("loginTab").classList.add("active"); document.getElementById("regTab").classList.remove("active");
   document.getElementById("loginForm").style.display="block"; document.getElementById("regForm").style.display="none";
@@ -176,16 +326,18 @@ document.getElementById("regTab").onclick=()=>{
   document.getElementById("regTab").classList.add("active"); document.getElementById("loginTab").classList.remove("active");
   document.getElementById("loginForm").style.display="none"; document.getElementById("regForm").style.display="block";
 };
+
+const saved = JSON.parse(localStorage.getItem("floot_driver_session")||"null");
+if(saved){ loginWithProfile(saved); }
+function showMain(){ document.getElementById("authScreen").style.display="none"; document.getElementById("mainApp").style.display="flex"; }
 function loginWithProfile(profile){
   currentUser=profile;
   document.getElementById("driverName").textContent=profile.name || "Driver";
   document.getElementById("driverEmail").textContent=profile.email;
   document.getElementById("avatar").textContent=(profile.name||"D").charAt(0).toUpperCase();
-  earnings = profile.totalEarnings||0; trips = profile.totalTrips||0;
-  document.getElementById("earnings").textContent="₦"+earnings.toLocaleString();
-  document.getElementById("trips").textContent=trips;
-  showMain();
-  startListener(profile.id);
+  document.getElementById("earnings").textContent="₦"+(profile.totalEarnings||0).toLocaleString();
+  document.getElementById("trips").textContent=profile.totalTrips||0;
+  showMain(); startListener(profile.id);
 }
 document.getElementById("regBtn").onclick=async()=>{
   const name=document.getElementById("regName").value.trim();
@@ -196,16 +348,15 @@ document.getElementById("regBtn").onclick=async()=>{
   const nin=document.getElementById("regNIN").value.trim();
   const msg=document.getElementById("regMsg");
   if(!name||!phone||!email||!pass||!bike){ msg.style.color="#F87171"; msg.textContent="Fill all fields"; return; }
-  if(pass.length<6){ msg.style.color="#F87171"; msg.textContent="Password min 6 chars"; return; }
   msg.style.color="#6B7280"; msg.textContent="Creating account...";
   try{
     const id = email.replace(/[^a-z0-9]/g,"_");
     const existing = await getDoc(doc(db,"drivers", id));
-    if(existing.exists()){ msg.style.color="#F87171"; msg.textContent="❌ Email already registered, please login"; return; }
+    if(existing.exists()){ msg.style.color="#F87171"; msg.textContent="❌ Email exists, login"; return; }
     const profile = { id, name, phone, email, password: pass, bikeNumber: bike, nin, totalEarnings:0, totalTrips:0, createdAt: new Date().toISOString() };
     await setDoc(doc(db,"drivers", id), profile);
     localStorage.setItem("floot_driver_session", JSON.stringify(profile));
-    msg.style.color="#10B981"; msg.textContent="✓ Account created! Logging in...";
+    msg.style.color="#10B981"; msg.textContent="✓ Created! Logging in...";
     setTimeout(()=> loginWithProfile(profile), 500);
   }catch(e){ msg.style.color="#F87171"; msg.textContent="❌ "+e.message; }
 };
@@ -218,15 +369,16 @@ document.getElementById("loginBtn").onclick=async()=>{
   try{
     const id = email.replace(/[^a-z0-9]/g,"_");
     const snap = await getDoc(doc(db,"drivers", id));
-    if(!snap.exists()){ msg.style.color="#F87171"; msg.textContent="❌ No account found, please register"; return; }
+    if(!snap.exists()){ msg.style.color="#F87171"; msg.textContent="❌ No account, register"; return; }
     const profile = snap.data();
-    if(profile.password!== pass){ msg.style.color="#F87171"; msg.textContent="❌ Wrong password"; return; }
+    if(profile.password!==pass){ msg.style.color="#F87171"; msg.textContent="❌ Wrong password"; return; }
     localStorage.setItem("floot_driver_session", JSON.stringify(profile));
     msg.style.color="#10B981"; msg.textContent="✓ Success!";
     setTimeout(()=> loginWithProfile(profile), 400);
   }catch(e){ msg.style.color="#F87171"; msg.textContent="❌ "+e.message; }
 };
 document.getElementById("logoutBtn").onclick=()=>{ localStorage.removeItem("floot_driver_session"); location.reload(); };
+
 function startListener(driverId){
   const q = query(collection(db, "delivery_requests"), orderBy("createdAt","desc"), limit(50));
   onSnapshot(q, snap=>{
@@ -246,16 +398,14 @@ function renderActive(driverId){
   document.getElementById("activeCount").textContent=mine.length;
   const box=document.getElementById("activeBox");
   if(mine.length===0){
-    box.innerHTML=`<div class="empty"><div style="width:48px;height:48px;border-radius:14px;background:#EDE9FE;display:grid;place-items:center;margin:0 auto 10px;color:#7C3AED"><i class="fa-solid fa-motorcycle"></i></div><div style="font-weight:700;font-size:13px;color:#1F1A2E">No active delivery</div><div class="small" style="margin-top:4px">Stay online — orders blast to all devices instantly</div></div>`;
+    box.innerHTML=`<div class="empty"><div style="width:48px;height:48px;border-radius:14px;background:#EDE9FE;display:grid;place-items:center;margin:0 auto 10px;color:#7C3AED"><i class="fa-solid fa-motorcycle"></i></div><div style="font-weight:700;font-size:13px;color:#1F1A2E">No active delivery</div></div>`;
   } else {
-    box.innerHTML=mine.map(r=>`<div class="order active"><div style="display:flex;justify-content:space-between"><span style="font-size:9px;font-weight:900;padding:4px 10px;border-radius:999px;background:#D1FAE5;color:#065F46">ACTIVE • OTP: ${r.otp}</span><span class="small">${r.distance}km</span></div><div style="margin-top:10px;font-weight:700;color:#1F1A2E">${r.pickup} → ${r.dropoff}</div><div class="small" style="margin-top:4px">${r.itemType||"Parcel"} • ₦${(r.offerAmount||0).toLocaleString()}</div></div>`).join("");
+    box.innerHTML=mine.map(r=>`<div class="order active" style="cursor:pointer" onclick="openNavigationPage(allData.find(x=>x.id==='${r.id}'))"><div style="display:flex;justify-content:space-between"><span style="font-size:9px;font-weight:900;padding:4px 10px;border-radius:999px;background:#D1FAE5;color:#065F46">ACTIVE • OTP: ${r.otp}</span><span class="small">${r.distance}km • TAP →</span></div><div style="margin-top:10px;font-weight:700;color:#1F1A2E">${r.pickup} → ${r.dropoff}</div><div class="small">${r.itemType||"Parcel"} • ₦${(r.offerAmount||0).toLocaleString()}</div><div style="margin-top:10px;background:#1F1A2E;color:#fff;padding:10px;border-radius:10px;text-align:center;font-weight:800;font-size:12px"><i class="fa-solid fa-compass"></i> OPEN DIRECTION</div></div>`).join("");
   }
 }
 function showIncoming(o){
   currentOrder=o;
   document.getElementById("inTitle").textContent=o.pickup+" → "+o.dropoff;
-  document.getElementById("mapPickup").textContent=o.pickup.slice(0,18);
-  document.getElementById("mapDropoff").textContent=o.dropoff.slice(0,18);
   document.getElementById("inPickup").textContent=o.pickup;
   document.getElementById("inDropoff").textContent=o.dropoff;
   document.getElementById("inDistance").textContent=(o.distance||0)+" km";
@@ -268,7 +418,6 @@ function showIncoming(o){
   timer=setInterval(()=>{ sec--; document.getElementById("countdown").textContent=sec+"s left"; if(sec<=0) hideIncoming(); },1000);
   if(navigator.vibrate) navigator.vibrate([300,100,300]);
 }
-function hideIncoming(){ document.getElementById("incoming").classList.remove("show"); if(timer) clearInterval(timer); currentOrder=null; }
 document.getElementById("declineBtn").onclick=hideIncoming;
 document.getElementById("onlineSwitch").onclick=function(){
   this.classList.toggle("on"); isOnline=this.classList.contains("on");
@@ -279,33 +428,47 @@ document.getElementById("onlineSwitch").onclick=function(){
 document.getElementById("acceptBtn").onclick=async()=>{
   if(!currentOrder||!currentUser) return;
   document.getElementById("acceptBtn").textContent="CLAIMING...";
-  try{ await updateDoc(doc(db,"delivery_requests",currentOrder.id), {status:"accepted", driverId:currentUser.id, driverName: currentUser.name}); hideIncoming(); }
-  catch(e){ alert("Taken: "+e.message); hideIncoming(); }
-  document.getElementById("acceptBtn").innerHTML=`ACCEPT • <span id="inOffer2">₦${(currentOrder?.offerAmount||0).toLocaleString()}</span>`;
-};
-document.getElementById("verifyBtn").onclick=async()=>{
-  const otp=document.getElementById("otpInput").value.trim();
-  const msg=document.getElementById("verifyMsg");
-  if(otp.length!==4){ msg.textContent="Enter 4-digit OTP"; return; }
-  if(!currentUser){ msg.textContent="Not logged in"; return; }
-  const match=allData.find(r=>r.driverId===currentUser.id && r.otp===otp && r.status==="accepted");
-  if(!match){ msg.style.color="#F87171"; msg.textContent="❌ OTP not found"; return; }
   try{
-    await updateDoc(doc(db,"delivery_requests",match.id), {status:"delivered"});
-    const driverRef = doc(db,"drivers", currentUser.id);
-    const snap = await getDoc(driverRef);
-    const data = snap.data()||{};
-    const newEarn = (data.totalEarnings||0)+match.offerAmount;
-    const newTrips = (data.totalTrips||0)+1;
-    await updateDoc(driverRef, {totalEarnings: newEarn, totalTrips: newTrips});
-    currentUser.totalEarnings=newEarn; currentUser.totalTrips=newTrips;
-    localStorage.setItem("floot_driver_session", JSON.stringify(currentUser));
-    document.getElementById("earnings").textContent="₦"+newEarn.toLocaleString();
-    document.getElementById("trips").textContent=newTrips;
-    msg.style.color="#10B981"; msg.textContent=`✓ Delivered +₦${match.offerAmount.toLocaleString()}`;
-    document.getElementById("otpInput").value="";
-  }catch(e){ msg.textContent=e.message; }
+    await updateDoc(doc(db,"delivery_requests",currentOrder.id), {status:"accepted", driverId:currentUser.id, driverName: currentUser.name});
+    const acceptedOrder={...currentOrder}; hideIncoming();
+    setTimeout(()=> openNavigationPage(acceptedOrder), 500);
+  }catch(e){ alert("Taken: "+e.message); hideIncoming(); }
 };
+
+// Navigation page buttons
+setTimeout(()=>{
+  document.getElementById("backFromNav").onclick=()=>{ document.getElementById("navPage").style.display='none'; };
+  document.getElementById("openMapsPickup").onclick=()=>{
+    if(!navOrder) return;
+    const origin = driverCoords? `${driverCoords.lat},${driverCoords.lng}` : '';
+    window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${encodeURIComponent(navOrder.pickup)}&travelmode=driving`, '_blank');
+  };
+  document.getElementById("openMapsDrop").onclick=()=>{
+    if(!navOrder) return;
+    window.open(`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(navOrder.pickup)}&destination=${encodeURIComponent(navOrder.dropoff)}&travelmode=driving`, '_blank');
+  };
+  document.getElementById("pickedUpBtn").onclick=()=>{ switchToDropoff(); };
+  document.getElementById("callCustomerBtn").onclick=()=>{ alert('Customer pickup: '+ (navOrder?.pickup||'')); };
+  document.getElementById("recenterBtn").onclick=()=>{ updateDriverLocation(); };
+  document.getElementById("navVerifyBtn").onclick=async()=>{
+    const otp=document.getElementById("navOtpInput").value.trim();
+    const msg=document.getElementById("navOtpMsg");
+    if(otp.length!==4){ msg.textContent='Enter 4-digit OTP'; return; }
+    if(otp!==navOrder.otp){ msg.style.color='#F87171'; msg.textContent='❌ Wrong OTP'; return; }
+    try{
+      await updateDoc(doc(db,'delivery_requests',navOrder.id), {status:'delivered'});
+      const driverRef = doc(db,'drivers', currentUser.id);
+      const snap = await getDoc(driverRef);
+      const data = snap.data()||{};
+      const newEarn = (data.totalEarnings||0)+navOrder.offerAmount;
+      const newTrips = (data.totalTrips||0)+1;
+      await updateDoc(driverRef, {totalEarnings: newEarn, totalTrips: newTrips});
+      msg.style.color='#10B981'; msg.textContent='✓ Delivered! +₦'+navOrder.offerAmount.toLocaleString();
+      setTimeout(()=>{ document.getElementById("navPage").style.display='none'; location.reload(); }, 1500);
+    }catch(e){ msg.textContent=e.message; }
+  };
+  setInterval(()=>{ if(navOrder) updateDriverLocation(); }, 10000);
+}, 800);
 </script>
 </body>
 </html>
