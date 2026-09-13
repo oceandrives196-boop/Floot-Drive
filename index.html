@@ -72,6 +72,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#FBFAFF;color:var(--dark)
 .history-item{display:flex;gap:12px;padding:12px;border:1px solid #F3F0FF;border-radius:14px;margin-bottom:8px;background:#fff}
 .small{font-size:11px;color:var(--muted)}
 .parcel-thumb{width:60px;height:60px;border-radius:12px;object-fit:cover;background:#F5F3FF;border:1px solid #EDE9FE}
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#8B8BA7;cursor:pointer;padding:4px;font-size:14px}
 </style>
 </head>
 <body>
@@ -92,7 +93,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#FBFAFF;color:var(--dark)
     <div class="tabs"><div id="loginTab" class="tab active">Login</div><div id="regTab" class="tab">Register</div></div>
     <div id="loginForm">
       <div class="input-wrap"><i class="fa-solid fa-envelope"></i><input id="loginEmail" class="input" type="email" placeholder="Email"></div>
-      <div class="input-wrap"><i class="fa-solid fa-lock"></i><input id="loginPass" class="input" type="password" placeholder="Password"></div>
+      <div class="input-wrap"><i class="fa-solid fa-lock"></i><input id="loginPass" class="input" type="password" placeholder="Password"><button type="button" class="eye-btn" id="eyeLogin"><i class="fa-solid fa-eye"></i></button></div>
       <button id="loginBtn" class="btn btn-primary" style="width:100%">LOGIN TO FLOOT</button>
       <div id="loginMsg" class="small" style="text-align:center;margin-top:10px"></div>
     </div>
@@ -100,7 +101,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#FBFAFF;color:var(--dark)
       <div class="input-wrap"><i class="fa-solid fa-user"></i><input id="regName" class="input" placeholder="Full Name *"></div>
       <div class="input-wrap"><i class="fa-solid fa-phone"></i><input id="regPhone" class="input" placeholder="Phone (080...) *"></div>
       <div class="input-wrap"><i class="fa-solid fa-envelope"></i><input id="regEmail" class="input" type="email" placeholder="Email *"></div>
-      <div class="input-wrap"><i class="fa-solid fa-lock"></i><input id="regPass" class="input" type="password" placeholder="Password min 6 *"></div>
+      <div class="input-wrap"><i class="fa-solid fa-lock"></i><input id="regPass" class="input" type="password" placeholder="Password min 6 *"><button type="button" class="eye-btn" id="eyeReg"><i class="fa-solid fa-eye"></i></button></div>
       <div class="input-wrap"><i class="fa-solid fa-motorcycle"></i><input id="regBike" class="input" placeholder="Bike Number *"></div>
       <button id="regBtn" class="btn btn-primary" style="width:100%">CREATE DRIVER ACCOUNT</button>
       <div id="regMsg" class="small" style="text-align:center;margin-top:10px"></div>
@@ -189,8 +190,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#FBFAFF;color:var(--dark)
     <div style="width:36px;height:4px;background:#EDE9FE;border-radius:999px;margin:0 auto 12px"></div>
     <div id="activeBox"></div>
     <div id="waitingBox">
-      <div style="display:flex;gap:12px;align-items:center"><div style="width:44px;height:44px;border-radius:12px;background:#F5F3FF;display:grid;place-items:center;color:#7C3AED" class="pulse"><i class="fa-solid fa-satellite-dish"></i></div><div><div style="font-weight:800">Waiting for orders</div><div class="small">Stay online • Sound ON • Map active • Real locations</div></div></div>
-      <div style="margin-top:12px;background:#FAF7FF;border:1px dashed #DDD6FE;border-radius:12px;padding:10px;display:flex;gap:8px;align-items:center"><div style="width:28px;height:28px;border-radius:8px;background:#7C3AED;display:grid;place-items:center;color:#fff"><i class="fa-solid fa-volume-high" style="font-size:12px"></i></div><div class="small" style="flex:1">Bolt-style sound will play on new request + vibration</div><button id="testSoundBtn" style="background:#fff;border:1px solid #EDE9FE;padding:6px 10px;border-radius:999px;font-size:10px;font-weight:800;color:#7C3AED">TEST</button></div>
+      <div style="display:flex;gap:12px;align-items:center"><div style="width:44px;height:44px;border-radius:12px;background:#F5F3FF;display:grid;place-items:center;color:#7C3AED" class="pulse"><i class="fa-solid fa-satellite-dish"></i></div><div><div style="font-weight:800">Waiting for bike orders</div><div class="small">Stay online • Floot NG • Bike delivery only</div></div></div>
     </div>
   </div>
 
@@ -289,9 +289,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#FBFAFF;color:var(--dark)
   </div>
 </div>
 
-<audio id="requestSound" preload="auto" loop>
-  <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
-</audio>
+<audio id="requestSound" preload="auto" loop><source src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_7f0e1d6813.mp3?filename=notification-sound-7062.mp3" type="audio/mpeg"></audio>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
@@ -322,6 +320,21 @@ function showLogin(){ document.getElementById("authScreen").style.display="flex"
 function showMain(){ document.getElementById("authScreen").style.display="none"; document.getElementById("mainApp").style.display="flex"; setTimeout(initDriverMap, 300); }
 
 document.getElementById("loginTab").onclick=()=>{ document.getElementById("loginTab").classList.add("active"); document.getElementById("regTab").classList.remove("active"); document.getElementById("loginForm").style.display="block"; document.getElementById("regForm").style.display="none"; };
+
+// Password visibility toggle
+function setupEye(inputId, eyeId){
+  const inp=document.getElementById(inputId);
+  const eye=document.getElementById(eyeId);
+  if(!inp||!eye) return;
+  eye.onclick=()=>{
+    const isPass=inp.type==='password';
+    inp.type=isPass?'text':'password';
+    eye.innerHTML=isPass?'<i class="fa-solid fa-eye-slash"></i>':'<i class="fa-solid fa-eye"></i>';
+  };
+}
+setupEye('loginPass','eyeLogin');
+setupEye('regPass','eyeReg');
+
 document.getElementById("regTab").onclick=()=>{ document.getElementById("regTab").classList.add("active"); document.getElementById("loginTab").classList.remove("active"); document.getElementById("loginForm").style.display="none"; document.getElementById("regForm").style.display="block"; };
 
 function loginWithProfile(p){
@@ -508,10 +521,37 @@ async function showIncoming(o){
   if(timer) clearInterval(timer);
   timer=setInterval(()=>{ sec--; document.getElementById("countdown").textContent=sec+"s"; if(sec<=0) hideIncoming(); },1000);
 
-  // Sound + Vibration like Bolt
-  const sound=document.getElementById("requestSound");
-  try{ sound.currentTime=0; await sound.play(); }catch{}
-  if(navigator.vibrate) navigator.vibrate([400,100,400,100,400]);
+  // SOUND FIX - Loud Bolt-style beep that actually works
+  try{
+    // Unlock audio context on user interaction
+    if(!window._flootAudioCtx){ window._flootAudioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
+    const ctx=window._flootAudioCtx;
+    if(ctx.state==='suspended') await ctx.resume();
+    // Play 5 loud beeps
+    let beepCount=0;
+    const playBeep=()=>{
+      if(beepCount>=8 || !currentOrder) return;
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.type='sine';
+      osc.frequency.value=850;
+      gain.gain.setValueAtTime(0.9, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime+0.4);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime+0.4);
+      beepCount++;
+      setTimeout(playBeep, 500);
+    };
+    playBeep();
+  }catch(e){ console.log("Web Audio failed", e); }
+  // Also try HTML audio as backup
+  try{
+    const sound=document.getElementById("requestSound");
+    sound.currentTime=0; sound.volume=1.0;
+    await sound.play().catch(()=>{});
+  }catch{}
+  if(navigator.vibrate) navigator.vibrate([500,100,500,100,500,100,800]);
+
 
   // Map for incoming
   setTimeout(async()=>{
@@ -547,7 +587,7 @@ document.getElementById("onlinePill").onclick=function(){
   document.getElementById("conn").textContent=isOnline?"Online":"Offline";
   if(!isOnline) hideIncoming();
 };
-document.getElementById("testSoundBtn").onclick=async()=>{ const s=document.getElementById("requestSound"); try{ s.currentTime=0; await s.play(); setTimeout(()=>{ s.pause(); s.currentTime=0; }, 2000); if(navigator.vibrate) navigator.vibrate([300,100,300]); }catch{} };
+// test sound removed
 document.getElementById("acceptBtn").onclick=async()=>{
   if(!currentOrder||!currentUser) return;
   document.getElementById("acceptBtn").textContent="CLAIMING...";
