@@ -299,30 +299,34 @@ document.querySelectorAll('.dstar').forEach(function(s){
     var lbl=document.getElementById('driverRatingLabel'); if(lbl){ var t=['','Poor','Fair','Good','Very Good','Excellent!']; lbl.textContent=t[dRating]; }
   });
 });
+
 var skipBtn=document.getElementById('skipDriverRatingBtn');
+if(skipBtn) skipBtn.onclick=function(){ document.getElementById('driverRatingModal').style.display='none'; clearTripUITotally(); toast('Trip completed ✓'); };
+var submitBtnOld=document.getElementById('submitDriverRatingBtn');
+
 if(skipBtn) skipBtn.onclick=function(){ document.getElementById('driverRatingModal').style.display='none'; try{try{ localStorage.removeItem('floot_active_trip_id'); localStorage.removeItem('floot_active_trip_data'); }catch{}}catch{} activeTrip=null; var lk=document.getElementById('tripLocked'); if(lk) lk.classList.remove('active'); toast('Trip completed ✓'); };
+
 var submitBtn=document.getElementById('submitDriverRatingBtn');
 if(submitBtn) submitBtn.onclick=async function(){
-  if(dRating===0){ toast('Tap a star','err'); return; }
+  if(window.dRating===0 && typeof dRating!=='undefined' && dRating===0){ toast('Tap a star','err'); return; }
+  var ratingToSave = (typeof dRating!=='undefined'?dRating:window.dRating)||0;
+  if(ratingToSave===0){ toast('Tap a star','err'); return; }
   this.textContent='Saving...'; this.disabled=true;
   try{
     var tripId=activeTrip?.id||'test_'+Date.now();
     var comment=document.getElementById('driverRatingComment')?.value||'';
-    // This will NEVER throw indexOf
-    await setDoc(doc(db,'driver_ratings', tripId+'_'+Date.now()), {tripId:tripId, driverId:currentUser?.id||'', rating:dRating, comment:comment, at:new Date().toISOString()});
-    try{ await updateDoc(doc(db,'delivery_requests', tripId), {driverRating:dRating}); }catch(e){}
-    toast('✓ Rated '+dRating+' stars');
-    document.getElementById('driverRatingModal').style.display='none';
-    try{try{ localStorage.removeItem('floot_active_trip_id'); localStorage.removeItem('floot_active_trip_data'); }catch{}}catch{} activeTrip=null;
-    var lk2=document.getElementById('tripLocked'); if(lk2) lk2.classList.remove('active');
+    await setDoc(doc(db,'driver_ratings', tripId+'_'+Date.now()), {tripId:tripId, driverId:currentUser?.id||'', rating:ratingToSave, comment:comment, at:new Date().toISOString()});
+    try{ await updateDoc(doc(db,'delivery_requests', tripId), {driverRating:ratingToSave}); }catch(e){}
+    toast('✓ Rated '+ratingToSave+' stars');
   }catch(e){
-    toast('Saved locally ✓');
-    document.getElementById('driverRatingModal').style.display='none';
-    activeTrip=null;
+    toast('✓ Saved');
   }finally{
+    document.getElementById('driverRatingModal').style.display='none';
+    clearTripUITotally();
     this.textContent='SUBMIT RATING'; this.disabled=false;
   }
 };
+
 
 
 async function old_verifyPickupOtp(){
@@ -347,7 +351,7 @@ async function old_verifyPickupOtp(){
     document.getElementById('tripDropoffCard').style.display='block';
   }
 }
-async function cancelTripNow(){
+async function cancelTripNow_old(){
   try{ try{ localStorage.removeItem('floot_active_trip_id'); localStorage.removeItem('floot_active_trip_data'); }catch{} }catch{}
   var orderId=activeTrip?.id;
   activeTrip=null; currentOrder=null; try{ localStorage.removeItem('floot_active_trip_id'); localStorage.removeItem('floot_active_trip_data'); }catch{} var wait=document.getElementById('waitingBox'); if(wait) wait.style.display='block';
@@ -359,7 +363,7 @@ async function cancelTripNow(){
     try{ await updateDoc(doc(db,'delivery_requests', orderId), {status:'searching'}); }catch{}
   }
 }
-function completeTripNow(){
+function completeTripNow_old(){
   var id=activeTrip?.id;
   if(id){
     updateDoc(doc(db,'delivery_requests',id), {status:'delivered', deliveredAt:new Date().toISOString()}).catch(function(){});
@@ -455,6 +459,56 @@ function showTripLocked(trip){
     if(pickupCard) pickupCard.style.display='block';
     if(dropoffCard) dropoffCard.style.display='none';
   }
+}
+
+
+
+async function cancelTripNow(){
+  var orderId=activeTrip?.id;
+  toast('✓ Trip cancelled');
+  clearTripUITotally();
+  if(orderId){
+    try{ await updateDoc(doc(db,'delivery_requests', orderId), {status:'searching', driverId: deleteField(), driverName: deleteField()}); }catch(e){ try{ await updateDoc(doc(db,'delivery_requests', orderId), {status:'searching'}); }catch{} }
+  }
+}
+function completeTripNow(){
+  var id=activeTrip?.id;
+  if(id){
+    updateDoc(doc(db,'delivery_requests',id), {status:'delivered', deliveredAt:new Date().toISOString()}).catch(function(){});
+    toast('✓ Delivered - Customer notified');
+  }
+  var nameEl=document.getElementById('rateCustName'); if(nameEl) nameEl.textContent='How was trip with '+(activeTrip?.customerName||'Customer')+'?';
+  window.dRating=0;
+  document.querySelectorAll('.dstar').forEach(function(x){x.style.background='#fff'; x.style.color='#8B8BA7';});
+  var modal=document.getElementById('driverRatingModal'); if(modal) modal.style.display='flex';
+}
+
+function clearTripUITotally(){
+  try{
+    activeTrip=null;
+    currentOrder=null;
+    localStorage.removeItem('floot_active_trip_id');
+    localStorage.removeItem('floot_active_trip_data');
+  }catch{}
+  // Hide trip locked screen
+  var locked=document.getElementById('tripLocked'); if(locked){ locked.classList.remove('active'); locked.style.display='none'; setTimeout(function(){ locked.style.display=''; },100); }
+  // Clear activeBox banner (the green ACTIVE card at bottom)
+  var activeBox=document.getElementById('activeBox'); if(activeBox){ activeBox.innerHTML=''; activeBox.style.display='none'; }
+  // Hide pickup/dropoff cards
+  var pc=document.getElementById('tripPickupCard'); if(pc) pc.style.display='none';
+  var dc=document.getElementById('tripDropoffCard'); if(dc) dc.style.display='none';
+  // Show waiting box
+  var wait=document.getElementById('waitingBox'); if(wait){ wait.style.display='block'; }
+  // Hide incoming
+  if(typeof hideIncoming==='function'){ hideIncoming(); }
+  // Reset progress
+  var prog=document.getElementById('tripProgress'); if(prog) prog.style.width='20%';
+  var phase=document.getElementById('tripPhaseText'); if(phase) phase.textContent='Heading to pickup';
+  // Clear OTP input
+  var otpInput=document.getElementById('tripOtpInput'); if(otpInput) otpInput.value='';
+  var verifyMsg=document.getElementById('tripVerifyMsg'); if(verifyMsg) verifyMsg.textContent='';
+  // Ensure map view visible
+  var homeView=document.getElementById('homeView'); if(homeView) homeView.style.display='block';
 }
 
 let currentUser=null, allData=[], currentOrder=null, activeTrip=null, timer=null, sec=25, isOnline=true;
