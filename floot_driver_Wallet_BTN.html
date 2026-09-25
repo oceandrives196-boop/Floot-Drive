@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+
+.support-quick{border:1px solid #EDE9FE;background:#fff;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:800;color:#7C3AED;white-space:nowrap;cursor:pointer}
+.chat-bubble{max-width:78%;padding:10px 12px;border-radius:14px;font-size:13px;line-height:1.4}
+.chat-driver{align-self:flex-end;background:#7C3AED;color:#fff;border-radius:14px 14px 4px 14px}
+.chat-support{align-self:flex-start;background:#fff;border:1px solid #F3F0FF;border-radius:14px 14px 14px 4px}
+.chat-time{font-size:9px;opacity:.7;margin-top:4px}
+
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Floot NG - Bike Delivery Only</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--purple:#7C3AED;--purple2:#A78BFA;--purple3:#EDE9FE;--dark:#1F1A2E;--muted:#8B8BA7;--green:#10B981;--white:#fff}
+body{font-family:Inter,system-ui,sans-serif;background:#FBFAFF;color:var(--dark);overflow:hidden}
+.app{max-width:440px;margin:0 auto;height:100vh;background:#fff;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.auth-bg{background:linear-gradient(180deg,#7C3AED 0%, #5B21B6 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:fixed;inset:0;z-index:100000;overflow:auto}
+.auth-card{width:100%;max-width:380px;background:#fff;border-radius:28px;padding:28px;box-shadow:0 20px 60px rgba(92,33,182,.3)}
+.input{width:100%;background:#F5F3FF;border:1px solid #EDE9FE;border-radius:14px;padding:14px 14px 14px 42px;font-size:14px;outline:none;margin-bottom:10px}
+.input-wrap{position:relative}
+.input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--purple2)}
+.btn{border:none;border-radius:14px;padding:14px;font-weight:800;font-size:14px;cursor:pointer;transition:.2s}
+.btn-primary{background:linear-gradient(90deg,#7C3AED,#8B5CF6);color:#fff;box-shadow:0 8px 20px rgba(124,58,237,.25)}
+.btn-ghost{background:#F5F3FF;color:var(--purple);border:1px solid #EDE9FE}
+.btn-dark{background:#1F1A2E;color:#fff}
+.tabs{display:flex;background:#F5F3FF;border-radius:12px;padding:4px;margin-bottom:16px}
+.tab{flex:1;padding:10px;border-radius:10px;text-align:center;font-weight:800;font-size:13px;cursor:pointer;color:var(--muted)}
+.tab.active{background:#fff;color:var(--purple);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:#fff;border-bottom:1px solid #F3F0FF;z-index:10}
+.avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7C3AED,#A78BFA);display:grid;place-items:center;color:#fff;font-weight:900;overflow:hidden}
+.online-pill{display:flex;align-items:center;gap:8px;background:#F5F3FF;border:1px solid #EDE9FE;border-radius:999px;padding:6px 12px;cursor:pointer}
+.switch{width:40px;height:24px;background:#E5E7EB;border-radius:999px;position:relative;transition:.2s}
+.switch.on{background:#10B981}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.switch.on::after{left:18px}
+.map-container{flex:1;position:relative;background:#F5F3FF}
+#driverMap{width:100%;height:100%;z-index:1}
+.bottom-sheet{background:#fff;border-radius:28px 28px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.12);padding:16px;position:relative;z-index:20;max-height:55vh;overflow:auto}
+.card{background:#fff;border:1px solid #F3F0FF;border-radius:18px;padding:14px;box-shadow:0 4px 20px rgba(124,58,237,.06);margin-bottom:10px}
+.incoming{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);display:none;align-items:end;justify-content:center;padding:12px}
+.incoming.show{display:flex}
+.incoming-card{width:100%;max-width:420px;background:#fff;border-radius:28px;overflow:hidden;animation:slideUp .35s cubic-bezier(.16,1,.3,1)}
+@keyframes slideUp{from{transform:translateY(110%)}to{transform:translateY(0)}}
+.pulse{animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(124,58,237,.4)}70%{box-shadow:0 0 0 16px rgba(124,58,237,0)}100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}}
+.trip-locked{position:fixed;inset:0;z-index:10000;background:#fff;display:none;flex-direction:column}
+.trip-locked.active{display:flex !important;opacity:1 !important;visibility:visible !important}
+.trip-map{height:42vh;position:relative;background:#F5F3FF;min-height:300px}
+#tripMap{width:100% !important;height:100% !important;min-height:42vh;z-index:1}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:#fff;border-top:1px solid #F3F0FF;display:flex;justify-content:space-around;padding:8px 0 14px;z-index:50}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;padding:6px 18px;border-radius:12px}
+.nav-item.active{color:var(--purple);background:#F5F3FF}
+.nav-item i{font-size:18px}
+.history-item{display:flex;gap:12px;padding:12px;border:1px solid #F3F0FF;border-radius:14px;margin-bottom:8px;background:#fff}
+.small{font-size:11px;color:var(--muted)}
+.parcel-thumb{width:60px;height:60px;border-radius:12px;object-fit:cover;background:#F5F3FF;border:1px solid #EDE9FE}
+.upload-box{border:2px dashed #DDD6FE;background:#FAF7FF;border-radius:14px;padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:10px;cursor:pointer;position:relative;overflow:hidden}
+.upload-box.has-file{border-style:solid;border-color:#7C3AED;background:#F5F3FF}
+.upload-icon{width:48px;height:48px;border-radius:12px;background:#fff;border:1px solid #EDE9FE;display:grid;place-items:center;color:#7C3AED;flex-shrink:0;overflow:hidden}
+.upload-icon img{width:100%;height:100%;object-fit:cover}
+.upload-info{flex:1;min-width:0}
+.upload-info b{font-size:12px;display:block}
+.upload-info span{font-size:10px;color:var(--muted)}
+.file-input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.mandatory-tag{font-size:9px;background:#DC2626;color:#fff;padding:2px 6px;border-radius:999px;font-weight:800;margin-left:6px}
+.verified-tag{font-size:9px;background:#10B981;color:#fff;padding:2px 6px;border-radius:999px;font-weight:800}
+
+.support-quick{border:1px solid #EDE9FE;background:#fff;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:800;color:#7C3AED;white-space:nowrap;cursor:pointer}
+.chat-bubble{max-width:78%;padding:10px 12px;border-radius:14px;font-size:13px;line-height:1.4}
+.chat-driver{align-self:flex-end;background:#7C3AED;color:#fff;border-radius:14px 14px 4px 14px}
+.chat-support{align-self:flex-start;background:#fff;border:1px solid #F3F0FF;border-radius:14px 14px 14px 4px}
+.chat-time{font-size:9px;opacity:.7;margin-top:4px}
+
+</style>
+</head>
+<body>
+
+<div id="authScreen" class="auth-bg">
+  <div style="text-align:center;color:#fff;margin-bottom:18px">
+    <div style="width:100%;max-width:280px;background:#fff;border-radius:24px;display:grid;place-items:center;margin:0 auto 14px;box-shadow:0 12px 40px rgba(0,0,0,.25);overflow:hidden;padding:18px 18px"><img id="flootExactLogo" src="https://ik.imagekit.io/anyl9hsxh/FB_IMG_1773667740309.jpg?updatedAt=1789125101906" style="width:100%;height:auto;object-fit:contain;max-height:110px;border-radius:16px;background:#fff;padding:8px"><div style="color:#7C3AED;font-weight:900;display:none" id="logoFallback">FLOOT NG</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <div style="font-weight:900;font-size:13px;letter-spacing:.08em;display:flex;align-items:center;gap:8px"><span style="background:#fff;color:#7C3AED;padding:4px 12px;border-radius:999px;display:flex;align-items:center;gap:6px"><i class="fa-solid fa-motorcycle"></i> FLOOT NG • BIKE DELIVERY ONLY</span></div>
+      <div style="opacity:.95;font-size:12px;margin-top:2px;font-weight:700;letter-spacing:.04em">better days are here</div>
+    </div>
+  </div>
+  <div class="auth-card">
+    <div class="tabs"><div id="loginTab" class="tab active">Login</div><div id="regTab" class="tab">Register</div></div>
+    <div id="loginForm">
+      <div class="input-wrap"><i class="fa-solid fa-envelope"></i><input id="loginEmail" class="input" type="email" placeholder="Email"></div>
+      <div class="input-wrap"><i class="fa-solid fa-lock"></i><input id="loginPass" class="input" type="password" placeholder="Password"><button type="button" id="eyeLogin" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#8B8BA7"><i class="fa-solid fa-eye"></i></button></div>
+      <button id="loginBtn" class="btn btn-primary" style="width:100%">LOGIN TO FLOOT</button>
+      <div id="loginMsg" class="small" style="text-align:center;margin-top:10px"></div>
+    </div>
+    <div id="regForm" style="display:none;max-height:70vh;overflow:auto;padding-right:4px">
+      <div class="input-wrap"><i class="fa-solid fa-user"></i><input id="regName" class="input" placeholder="Full Name *"></div>
+      <div class="input-wrap"><i class="fa-solid fa-phone"></i><input id="regPhone" class="input" placeholder="Phone (080...) *"></div>
+      <div class="input-wrap"><i class="fa-solid fa-envelope"></i><input id="regEmail" class="input" type="email" placeholder="Email *"></div>
+      <div class="input-wrap"><i class="fa-solid fa-lock"></i><input id="regPass" class="input" type="password" placeholder="Password min 6 *"><button type="button" id="eyeReg" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#8B8BA7"><i class="fa-solid fa-eye"></i></button></div>
+      <div class="input-wrap"><i class="fa-solid fa-motorcycle"></i><input id="regBike" class="input" placeholder="Bike Number *"></div>
+      
+      <div style="margin:14px 0 8px;font-weight:800;font-size:12px;display:flex;align-items:center">Driver Verification <span class="mandatory-tag">REQUIRED</span></div>
+      <div class="upload-box" id="profileUploadBox">
+        <div class="upload-icon" id="profilePreviewIcon"><i class="fa-solid fa-camera"></i></div>
+        <div class="upload-info"><b>Profile Picture * <span id="profileCheck" style="display:none" class="verified-tag">✓ UPLOADED</span></b><span id="profileFileName">Tap to upload face photo - Clear background</span></div>
+        <input type="file" id="regProfilePic" class="file-input" accept="image/*">
+      </div>
+      <div class="upload-box" id="ninUploadBox">
+        <div class="upload-icon" id="ninPreviewIcon"><i class="fa-solid fa-id-card"></i></div>
+        <div class="upload-info"><b>NIN Slip / Valid ID * <span id="ninCheck" style="display:none" class="verified-tag">✓ UPLOADED</span></b><span id="ninFileName">Tap to upload NIN, Driver's License or National ID</span></div>
+        <input type="file" id="regNinDoc" class="file-input" accept="image/*,.pdf">
+      </div>
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:8px;margin-bottom:10px"><div style="font-size:10px;font-weight:800;color:#92400E"><i class="fa-solid fa-shield-halved"></i> Why we need this?</div><div style="font-size:10px;color:#92400E;margin-top:2px">For rider safety & KYC verification. Your ID is kept private and only used for verification.</div></div>
+
+      <button id="regBtn" class="btn btn-primary" style="width:100%">CREATE DRIVER ACCOUNT</button>
+      <div id="regMsg" class="small" style="text-align:center;margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="mainApp" style="display:none">
+  <div class="header">
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="avatar" id="avatar">D</div>
+      <div><div style="display:flex;align-items:center;gap:8px"><div style="font-weight:800;font-size:14px" id="driverName">Driver</div><div style="background:#FFFBEB;border:1px solid #FDE68A;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:800;display:flex;gap:3px;align-items:center"><span style="color:#F59E0B">★</span><span id="driverRating">5.0</span><span style="color:#8B8BA7" id="ratingCount">(0)</span></div><span id="kycBadge" style="display:none;font-size:9px;background:#ECFDF5;color:#065F46;padding:2px 6px;border-radius:999px;font-weight:800"><i class="fa-solid fa-circle-check"></i> VERIFIED</span></div><div class="small" style="display:flex;align-items:center;gap:4px"><span id="driverEmail">driver@floot.ng</span> • <span style="color:#10B981">●</span> <span id="conn">Online</span></div></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="online-pill" id="onlinePill"><div class="switch on" id="onlineSwitch"></div><div style="font-weight:800;font-size:12px" id="onlineText">ONLINE</div></div>
+      <button id="logoutBtn" style="width:36px;height:36px;border-radius:10px;border:1px solid #F3F0FF;background:#fff;color:#6B7280"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </div>
+  </div>
+
+  <div class="map-container" id="homeView">
+    <div id="driverMap"></div>
+    <div style="position:absolute;top:12px;left:12px;right:12px;z-index:400;display:flex;gap:8px">
+      <div style="flex:1;background:#fff;border-radius:14px;padding:10px 12px;box-shadow:0 4px 20px rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:9px;font-weight:800;letter-spacing:.1em;color:#8B8BA7">EARNINGS TODAY</div><div style="font-weight:900;font-size:14px" id="earnings">₦0.00</div><button id="walletBtn" onclick="window.open('https://wallet.floot.com.ng','_blank')" style="margin-top:6px;display:inline-flex;align-items:center;gap:5px;background:#7C3AED;color:#fff;padding:6px 12px;border-radius:999px;font-size:10px;font-weight:900;border:none;cursor:pointer;letter-spacing:.02em"><i class="fa-solid fa-wallet"></i> Wallet</button></div><div style="width:32px;height:32px;border-radius:10px;background:#ECFDF5;display:grid;place-items:center;color:#10B981"><i class="fa-solid fa-naira-sign"></i></div></div>
+      <div style="flex:1;background:#1F1A2E;color:#fff;border-radius:14px;padding:10px 12px;box-shadow:0 4px 20px rgba(0,0,0,.15);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:9px;font-weight:800;letter-spacing:.1em;opacity:.6">TRIPS</div><div style="font-weight:900;font-size:14px" id="trips">0</div></div><div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.15);display:grid;place-items:center"><i class="fa-solid fa-route"></i></div></div>
+    </div>
+    <div style="position:absolute;top:88px;left:12px;z-index:400;background:rgba(31,26,46,.85);color:#fff;padding:6px 10px;border-radius:999px;font-size:10px;font-weight:800;display:flex;gap:6px;align-items:center"><i class="fa-solid fa-radar" style="color:#10B981"></i> <span id="radarText">30-min Radar Active • 8km</span></div>
+    <button id="centerMeBtn" style="position:absolute;bottom:110px;right:12px;z-index:400;width:44px;height:44px;border-radius:12px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.12);border:1px solid #F3F0FF;color:#7C3AED"><i class="fa-solid fa-crosshairs"></i></button>
+  </div>
+
+  <div id="historyView" style="flex:1;overflow:auto;padding:16px;background:#FBFAFF;display:none"><div style="font-weight:900;font-size:18px;margin-bottom:12px">Trip History</div><div id="historyBox"><div class="small">No trips yet</div></div></div>
+  <div id="earningsView" style="flex:1;overflow:auto;padding:16px;background:#FBFAFF;display:none"><div style="font-weight:900;font-size:18px;margin-bottom:12px">Wallet & Earnings</div>
+  <div id="walletCard" class="card" style="background:linear-gradient(135deg,#1F1A2E,#3F3A5E);color:#fff;border:none"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:11px;opacity:.8;font-weight:800;letter-spacing:.1em">WALLET BALANCE</div><div style="font-size:32px;font-weight:900;margin-top:6px" id="walletBalance">₦0</div><div style="font-size:11px;opacity:.7;margin-top:4px">10% fee per delivery • Admin top-up only via Firebase drivers/{id} walletBalance</div></div><div style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.15);display:grid;place-items:center"><i class="fa-solid fa-wallet" style="font-size:20px"></i></div></div><div style="margin-top:12px;display:flex;gap:8px"><div style="flex:1;background:rgba(255,255,255,.1);border-radius:10px;padding:8px"><div style="font-size:9px;opacity:.7">FEES PAID</div><div style="font-weight:800" id="totalFeesPaid">₦0</div></div><div style="flex:1;background:rgba(255,255,255,.1);border-radius:10px;padding:8px"><div style="font-size:9px;opacity:.7">STATUS</div><div style="font-weight:800" id="walletStatus">Active</div></div></div><button onclick="window.open('https://wallet.floot.com.ng','_blank')" style="margin-top:12px;width:100%;display:flex;justify-content:center;align-items:center;gap:6px;background:#fff;color:#1F1A2E;padding:10px;border-radius:10px;font-weight:800;font-size:12px;border:none;cursor:pointer"><i class="fa-solid fa-up-right-from-square"></i> Open Wallet</button></div>
+  <div class="card" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none"><div style="font-size:11px;opacity:.8;font-weight:800;letter-spacing:.1em">TOTAL EARNINGS (90% net)</div><div style="font-size:28px;font-weight:900;margin-top:6px" id="earnTotal">₦0</div><div class="small" style="color:rgba(255,255,255,.7);margin-top:4px" id="earnTrips">0 trips completed</div></div><div class="card"><div style="display:flex;justify-content:space-between"><span class="small">Today</span><b id="earnToday">₦0</b></div></div><div id="earnList"></div></div>
+
+  <div id="supportView" style="flex:1;overflow:hidden;display:none;flex-direction:column;background:#FBFAFF;padding-bottom:70px">
+    <div style="padding:16px;background:#fff;border-bottom:1px solid #F3F0FF;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-weight:900;font-size:18px">Support Chat</div><div class="small"><span style="color:#10B981">●</span> Online • Reply within 5 mins</div></div>
+      <div style="width:36px;height:36px;border-radius:10px;background:#F5F3FF;display:grid;place-items:center;color:#7C3AED"><i class="fa-solid fa-headset"></i></div>
+    </div>
+    <div style="padding:12px;display:flex;gap:8px;overflow:auto">
+      <button class="support-quick" data-msg="My wallet is low, need top-up">Wallet Top-up</button>
+      <button class="support-quick" data-msg="Customer not picking call">Customer Issue</button>
+      <button class="support-quick" data-msg="I need help with a delivery">Trip Help</button>
+    </div>
+    <div id="supportMessages" style="flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#FBFAFF">
+      <div style="text-align:center;margin-top:20px">
+        <div style="width:56px;height:56px;border-radius:16px;background:#F5F3FF;display:grid;place-items:center;margin:0 auto;color:#7C3AED"><i class="fa-solid fa-comments"></i></div>
+        <div style="font-weight:800;margin-top:10px">How can we help?</div>
+        <div class="small" style="max-width:260px;margin:6px auto">Chat with Floot support. We see your trips and wallet. Be clear with your issue.</div>
+      </div>
+    </div>
+    <div style="padding:12px;background:#fff;border-top:2px solid #7C3AED;display:flex;gap:8px;align-items:end;position:sticky;bottom:0;z-index:20;box-shadow:0 -4px 20px rgba(0,0,0,.08)">
+      <textarea id="supportInput" placeholder="Type your reply to support..." style="flex:1;background:#F5F3FF;border:1px solid #EDE9FE;border-radius:14px;padding:12px;font-size:13px;min-height:44px;max-height:90px;outline:none;resize:none"></textarea>
+      <button id="supportSendBtn" style="width:44px;height:44px;border-radius:12px;background:#7C3AED;color:#fff;border:none;display:grid;place-items:center"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <div id="profileView" style="flex:1;overflow:auto;padding:16px;background:#FBFAFF;display:none">
+    <div style="font-weight:900;font-size:18px;margin-bottom:12px">Driver Profile <span style="font-size:10px;background:#F5F3FF;padding:4px 8px;border-radius:99px;color:#7C3AED">KYC</span></div>
+    <div class="card"><div style="display:flex;gap:12px"><div id="profileAvatarLarge" style="width:64px;height:64px;border-radius:16px;background:#F5F3FF;overflow:hidden;display:grid;place-items:center;border:1px solid #EDE9FE"></div><div><div style="font-weight:800" id="profileName">Driver</div><div class="small" id="profileEmail">driver@floot.ng</div><div style="margin-top:6px"><span id="profileKycStatus" style="font-size:10px;padding:4px 8px;border-radius:999px;font-weight:800"></span></div></div></div><div style="margin-top:12px"><div class="small">Phone: <b id="profilePhone">-</b></div><div class="small">Bike: <b id="profileBike">-</b></div><div class="small">Earnings: <b id="profileEarnings">₦0</b> • Trips: <b id="profileTrips">0</b></div><div class="small" style="margin-top:6px;background:#F5F3FF;padding:8px;border-radius:8px">Wallet: <b id="profileWallet">₦0</b> <span style="font-size:9px;color:#8B8BA7">(Admin top-up only)</span></div></div></div>
+    <div id="profileDocsCard" class="card"><div style="font-weight:800;font-size:12px;margin-bottom:10px">Verification Documents</div><div id="profileDocsList"></div><button id="updateKycBtn" style="width:100%;margin-top:10px;background:#1F1A2E;color:#fff;border:none;padding:12px;border-radius:12px;font-weight:800;display:none">UPDATE DOCUMENTS</button></div>
+    <button id="profileLogoutBtn" style="width:100%;margin-top:12px;background:#fff;border:1px solid #FECACA;color:#DC2626;padding:14px;border-radius:14px;font-weight:800">LOGOUT</button>
+  </div>
+
+  <div class="bottom-sheet" id="bottomSheet">
+    <div style="width:36px;height:4px;background:#EDE9FE;border-radius:999px;margin:0 auto 12px"></div>
+    <div id="activeBox"></div>
+    <div id="waitingBox">
+      <div style="display:flex;gap:12px;align-items:center"><div style="width:44px;height:44px;border-radius:12px;background:#F5F3FF;display:grid;place-items:center;color:#7C3AED" class="pulse"><i class="fa-solid fa-satellite-dish"></i></div><div><div style="font-weight:800">Waiting for orders</div><div class="small">30-min radar • Stay online • Real locations</div></div></div>
+      <div id="kycBlockWarning" style="display:none;margin-top:12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:10px;display:flex;gap:8px;align-items:center"><div style="width:28px;height:28px;border-radius:8px;background:#DC2626;display:grid;place-items:center;color:#fff"><i class="fa-solid fa-triangle-exclamation" style="font-size:12px"></i></div><div style="flex:1"><div style="font-weight:800;font-size:12px;color:#DC2626">Verification Required</div><div class="small" style="color:#991B1B">Upload profile photo & NIN to go online</div></div><button id="kycBlockBtn" style="background:#DC2626;color:#fff;border:none;padding:8px 12px;border-radius:999px;font-size:10px;font-weight:800">UPDATE</button></div>
+      <div style="margin-top:12px;background:#FAF7FF;border:1px dashed #DDD6FE;border-radius:12px;padding:10px;display:flex;gap:8px;align-items:center"><div style="width:28px;height:28px;border-radius:8px;background:#7C3AED;display:grid;place-items:center;color:#fff"><i class="fa-solid fa-volume-high" style="font-size:12px"></i></div><div class="small" style="flex:1">Bolt-style sound will play on new request + vibration</div><button id="testSoundBtn" style="background:#fff;border:1px solid #EDE9FE;padding:6px 10px;border-radius:999px;font-size:10px;font-weight:800;color:#7C3AED">TEST</button></div>
+      <div id="walletLowWarning" style="display:none;margin-top:12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:10px;display:flex;gap:8px;align-items:center"><div style="width:28px;height:28px;border-radius:8px;background:#DC2626;display:grid;place-items:center;color:#fff"><i class="fa-solid fa-wallet" style="font-size:12px"></i></div><div style="flex:1"><div style="font-weight:800;font-size:12px;color:#DC2626">Low Wallet</div><div class="small" style="color:#991B1B">Balance: <b class="walletBalText">₦0</b> • Ask Admin to top-up via Firebase</div></div></div>
+    <div id="radarInfo" class="small" style="margin-top:10px;text-align:center;color:#8B8BA7">Showing requests from last 30 mins within 8km of you</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active" data-view="home"><i class="fa-solid fa-house"></i>Home</div>
+    <div class="nav-item" data-view="earnings"><i class="fa-solid fa-wallet"></i>Earnings</div>
+    <div class="nav-item" data-view="history"><i class="fa-solid fa-clock-rotate-left"></i>History</div>
+    <div class="nav-item" data-view="support"><i class="fa-solid fa-headset"></i>Support</div>
+    <div class="nav-item" data-view="profile"><i class="fa-solid fa-user"></i>Profile</div>
+  </div>
+</div>
+
+<div id="kycUpdateModal" style="position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.65);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:16px">
+  <div style="width:100%;max-width:400px;background:#fff;border-radius:24px;overflow:hidden;max-height:90vh;overflow:auto">
+    <div style="background:linear-gradient(135deg,#DC2626,#991B1B);padding:16px;color:#fff;text-align:center"><div style="font-weight:900;font-size:16px"><i class="fa-solid fa-shield-halved"></i> Verification Required</div><div style="font-size:12px;opacity:.9;margin-top:4px">You must update your profile before going online</div></div>
+    <div style="padding:16px">
+      <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:10px;margin-bottom:12px"><div style="font-size:11px;font-weight:800;color:#991B1B">🔒 ACCOUNT RESTRICTED</div><div style="font-size:11px;color:#991B1B;margin-top:2px">New Floot policy: All drivers must upload profile photo & NIN/ID. You cannot receive orders until verified.</div></div>
+      <div class="upload-box" id="updateProfileUploadBox">
+        <div class="upload-icon" id="updateProfilePreviewIcon"><i class="fa-solid fa-camera"></i></div>
+        <div class="upload-info"><b>Profile Picture * <span id="updateProfileCheck" style="display:none" class="verified-tag">✓</span></b><span id="updateProfileFileName">Tap to upload</span></div>
+        <input type="file" id="updateProfilePic" class="file-input" accept="image/*">
+      </div>
+      <div class="upload-box" id="updateNinUploadBox">
+        <div class="upload-icon" id="updateNinPreviewIcon"><i class="fa-solid fa-id-card"></i></div>
+        <div class="upload-info"><b>NIN / Valid ID * <span id="updateNinCheck" style="display:none" class="verified-tag">✓</span></b><span id="updateNinFileName">Tap to upload</span></div>
+        <input type="file" id="updateNinDoc" class="file-input" accept="image/*,.pdf">
+      </div>
+      <button id="saveKycBtn" class="btn btn-primary" style="width:100%;margin-top:8px">VERIFY & GO ONLINE</button>
+      <div id="kycUpdateMsg" class="small" style="text-align:center;margin-top:8px"></div>
+      <button id="kycLogoutBtn" style="width:100%;margin-top:8px;background:#fff;border:1px solid #EDE9FE;color:#6B7280;padding:10px;border-radius:12px;font-weight:700;font-size:12px">Logout</button>
+    </div>
+  </div>
+</div>
+
+<div id="incoming" class="incoming">
+  <div class="incoming-card">
+    <div style="height:180px;position:relative;background:#F5F3FF"><div id="incomingMap" style="width:100%;height:100%"></div><div style="position:absolute;top:12px;left:12px;background:#1F1A2E;color:#fff;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;background:#10B981;border-radius:50%;animation:pulse 1.5s infinite"></div> NEW REQUEST • 30-MIN RADAR</div><div style="position:absolute;top:12px;right:12px;background:#fff;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.1)" id="countdown">25s</div></div>
+    <div style="padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-weight:900;font-size:16px" id="inTitle">Ketu → Lekki</div><div class="small" style="margin-top:2px" id="inDistance">5.2 km • Real distance • ~12 min</div><div style="font-size:10px;font-weight:800;color:#10B981;margin-top:2px" id="inRadarInfo"><i class="fa-solid fa-location-dot"></i> Within your radar • 2 mins ago</div></div><div style="text-align:right"><div style="font-weight:900;font-size:20px;color:#7C3AED" id="inOffer">₦1,040</div><div class="small">Fare</div></div></div>
+      <div style="margin-top:12px;background:#FAF7FF;border:1px solid #EDE9FE;border-radius:14px;padding:12px">
+        <div style="display:flex;gap:10px"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:10px;height:10px;background:#10B981;border-radius:50%"></div><div style="width:2px;height:24px;background:#EDE9FE;margin:4px 0"></div><div style="width:10px;height:10px;background:#7C3AED;border-radius:50%"></div></div><div style="flex:1"><div><div class="small" style="font-weight:800;letter-spacing:.08em">PICKUP • Real location</div><div style="font-weight:700;font-size:13px" id="inPickup">Ketu, Lagos</div><div class="small" id="inPickupAddr">Fetching address...</div></div><div style="margin-top:10px"><div class="small" style="font-weight:800;letter-spacing:.08em">DROPOFF • Real location</div><div style="font-weight:700;font-size:13px" id="inDropoff">Lekki, Lagos</div><div class="small" id="inDropoffAddr">Fetching address...</div></div></div></div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:10px;align-items:center"><img id="inParcelImg" style="width:52px;height:52px;border-radius:12px;object-fit:cover;background:#F5F3FF;display:none"><div style="flex:1"><div class="small" style="font-weight:800">PARCEL</div><div style="font-size:12px;font-weight:700" id="inItem">Food • Parcel</div><div class="small" id="inDesc">Customer added photo</div></div></div>
+      <div style="display:flex;gap:10px;margin-top:14px"><button id="declineBtn" class="btn btn-ghost" style="flex:1">DECLINE</button><button id="acceptBtn" class="btn btn-primary" style="flex:1.3">ACCEPT • <span id="inOffer2">₦0</span></button></div>
+    </div>
+  </div>
+</div>
+
+<div id="tripLocked" class="trip-locked">
+  <div class="trip-map"><div id="tripMap"></div><div style="position:absolute;top:12px;left:12px;right:12px;z-index:400;display:flex;justify-content:space-between"><div style="background:#1F1A2E;color:#fff;padding:8px 12px;border-radius:12px;font-size:11px;font-weight:800;display:flex;gap:8px;align-items:center"><div style="width:8px;height:8px;background:#10B981;border-radius:50%"></div> ACTIVE TRIP • LOCKED</div><div style="background:#fff;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:800;box-shadow:0 2px 10px rgba(0,0,0,.1)">🔒 Cannot exit</div></div><button id="tripCenterBtn" style="position:absolute;bottom:12px;right:12px;z-index:400;width:40px;height:40px;border-radius:12px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);border:none;color:#7C3AED"><i class="fa-solid fa-crosshairs"></i></button></div>
+  <div style="flex:1;overflow:auto;background:#FBFAFF;padding:14px;display:flex;flex-direction:column;gap:12px">
+    <div class="card" style="margin:0;display:flex;gap:12px;align-items:center"><img id="tripParcelImg" style="width:72px;height:72px;border-radius:14px;object-fit:cover;background:#F5F3FF;border:1px solid #EDE9FE;display:none"><div id="tripParcelNoImg" style="width:72px;height:72px;border-radius:14px;background:#F5F3FF;border:2px dashed #DDD6FE;display:grid;place-items:center;color:#8B8BA7"><i class="fa-solid fa-image"></i></div><div style="flex:1"><div style="font-weight:800" id="tripHeaderTitle">Ketu → Lekki</div><div class="small" id="tripDistance">5.2 km • Real route</div><div style="margin-top:4px;display:flex;gap:6px"><span style="background:#ECFDF5;color:#065F46;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800" id="tripFare">₦1,040</span></div></div></div>
+    <div class="card" style="margin:0;display:flex;gap:12px;align-items:center"><div id="tripCustAv" style="width:48px;height:48px;border-radius:12px;background:#EDE9FE;display:grid;place-items:center;overflow:hidden;font-weight:900;color:#7C3AED"><i class="fa-solid fa-user"></i></div><div style="flex:1"><div style="font-weight:800" id="tripCustName">Customer</div><div style="display:flex;align-items:center;gap:6px;margin-top:2px"><div style="background:#F5F3FF;border:1px solid #EDE9FE;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;color:#1F1A2E" id="tripCustPhone">080...</div><span style="font-size:10px;background:#10B981;color:#fff;padding:2px 6px;border-radius:999px">TAP TO CALL</span></div><div class="small" id="tripItem">Parcel</div></div><button id="tripCallBtn" style="width:56px;height:56px;border-radius:14px;background:#10B981;color:#fff;border:none;box-shadow:0 4px 12px rgba(16,185,129,.3)"><i class="fa-solid fa-phone" style="font-size:18px"></i></button></div>
+    <div class="card" style="margin:0" id="pickupPhase"><div style="display:flex;gap:10px"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:14px;height:14px;background:#10B981;border-radius:50%;border:3px solid #D1FAE5"></div><div style="width:2px;height:20px;background:#EDE9FE;margin:4px 0"></div><div style="width:14px;height:14px;background:#E5E7EB;border-radius:50%;border:3px solid #F3F0FF" id="dropDot"></div></div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center"><div style="flex:1"><div style="font-size:10px;font-weight:800;letter-spacing:.1em;color:#10B981">STEP 1 • PICKUP</div><div style="font-weight:800;font-size:14px" id="tripPickup">Ketu</div><div class="small" id="tripPickupFull">Real address</div></div><button id="goPickupBtn" style="background:#1F1A2E;color:#fff;border:none;padding:10px 14px;border-radius:999px;font-size:11px;font-weight:800"><i class="fa-solid fa-location-arrow"></i> NAVIGATE</button></div><button id="pickedUpBtn" style="width:100%;margin-top:12px;background:linear-gradient(90deg,#10B981,#34D399);color:#fff;border:none;padding:14px;border-radius:14px;font-weight:900;font-size:13px;box-shadow:0 4px 12px rgba(16,185,129,.3)"><i class="fa-solid fa-box"></i> PICKED UP • Item collected</button><button id="cancelTripBtn1" style="width:100%;margin-top:10px;background:#fff;border:1px solid #FECACA;color:#DC2626;padding:10px;border-radius:12px;font-weight:800;font-size:11px"><i class="fa-solid fa-xmark"></i> CANCEL TRIP</button></div></div></div>
+    <div class="card" style="margin:0;display:none" id="dropoffPhase"><div style="display:flex;gap:10px"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:14px;height:14px;background:#E5E7EB;border-radius:50%;border:3px solid #F3F0FF"></div><div style="width:2px;height:20px;background:#7C3AED;margin:4px 0"></div><div style="width:14px;height:14px;background:#7C3AED;border-radius:50%;border:3px solid #EDE9FE;animation:pulse 2s infinite"></div></div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center"><div style="flex:1"><div style="font-size:10px;font-weight:800;letter-spacing:.1em;color:#7C3AED">STEP 2 • DROPOFF • START TRIP</div><div style="font-weight:800;font-size:14px" id="tripDropoff">Lekki</div><div class="small" id="tripDropoffFull">Real address</div></div><button id="goDropoffBtn" style="background:#7C3AED;color:#fff;border:none;padding:10px 14px;border-radius:999px;font-size:11px;font-weight:800"><i class="fa-solid fa-location-arrow"></i> NAVIGATE</button></div><button id="startTripBtn" style="width:100%;margin-top:12px;background:#1F1A2E;color:#fff;border:none;padding:14px;border-radius:14px;font-weight:900;font-size:13px"><i class="fa-solid fa-route"></i> START TRIP TO DROPOFF</button><button id="cancelTripBtn2" style="width:100%;margin-top:10px;background:#fff;border:1px solid #FECACA;color:#DC2626;padding:10px;border-radius:12px;font-weight:800;font-size:11px"><i class="fa-solid fa-xmark"></i> CANCEL TRIP</button></div></div></div>
+    <div class="card" style="margin:0;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-color:#FDE68A;display:none" id="otpPhase"><div style="font-weight:800;font-size:13px">🔐 Enter Customer OTP</div><div style="margin-top:10px;background:#fff;border:1px dashed #FDE68A;border-radius:10px;padding:8px;text-align:center"><div class="small" style="color:#92400E;font-weight:700">🔒 Driver cannot see OTP • Customer must tell you</div></div><div style="margin-top:10px;display:flex;gap:8px"><input id="tripOtpInput" style="flex:1;min-width:0;background:#fff;border:2px solid #FDE68A;border-radius:14px;padding:14px;text-align:center;letter-spacing:.6em;font-size:22px;font-weight:900;outline:none;box-sizing:border-box" placeholder="• • • •" maxlength="4" inputmode="numeric"><button id="tripVerifyBtn" class="btn" style="width:120px;background:#92400E;color:#fff;font-weight:900">VERIFY</button></div><div id="tripVerifyMsg" style="text-align:center;margin-top:8px;min-height:18px;font-weight:700;font-size:12px"></div><button id="cancelTripBtn3" style="width:100%;margin-top:12px;background:#fff;border:1px solid #FECACA;color:#DC2626;padding:10px;border-radius:12px;font-weight:800;font-size:11px"><i class="fa-solid fa-xmark"></i> CANCEL TRIP</button></div>
+  </div>
+</div>
+
+<div id="driverRatingModal" style="position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="width:100%;max-width:380px;background:#fff;border-radius:24px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3)"><div style="text-align:center"><div style="width:56px;height:56px;border-radius:16px;background:#F5F3FF;display:grid;place-items:center;margin:0 auto 12px;color:#7C3AED;font-size:24px"><i class="fa-solid fa-star"></i></div><div style="font-weight:900;font-size:18px">Rate Customer</div><div class="small" style="margin-top:4px" id="rateCustName">How was your trip?</div></div><div style="display:flex;justify-content:center;gap:8px;margin:16px 0" id="driverStars"><button class="dstar" data-v="1" style="width:44px;height:44px;border-radius:12px;border:1px solid #EDE9FE;background:#fff;font-size:20px">★</button><button class="dstar" data-v="2" style="width:44px;height:44px;border-radius:12px;border:1px solid #EDE9FE;background:#fff;font-size:20px">★</button><button class="dstar" data-v="3" style="width:44px;height:44px;border-radius:12px;border:1px solid #EDE9FE;background:#fff;font-size:20px">★</button><button class="dstar" data-v="4" style="width:44px;height:44px;border-radius:12px;border:1px solid #EDE9FE;background:#fff;font-size:20px">★</button><button class="dstar" data-v="5" style="width:44px;height:44px;border-radius:12px;border:1px solid #EDE9FE;background:#fff;font-size:20px">★</button></div><div style="text-align:center;font-weight:800;color:#7C3AED;margin-bottom:8px" id="driverRatingLabel">Tap to rate</div><textarea id="driverRatingComment" placeholder="Comment (optional)" style="width:100%;background:#F5F3FF;border:1px solid #EDE9FE;border-radius:12px;padding:12px;font-size:13px;min-height:70px;outline:none;resize:none"></textarea><div style="display:flex;gap:10px;margin-top:12px"><button id="skipDriverRatingBtn" class="btn btn-ghost" style="flex:1">SKIP</button><button id="submitDriverRatingBtn" class="btn btn-primary" style="flex:1.4">SUBMIT</button></div></div>
+</div>
+
+<style>#flootToast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(120px);z-index:99999;background:#1F1A2E;color:#fff;padding:12px 18px;border-radius:14px;font-size:13px;font-weight:700;opacity:0;transition:all .3s;pointer-events:none;max-width:85%;text-align:center}#flootToast.show{opacity:1;transform:translateX(-50%) translateY(0)}</style>
+<div id="flootToast"></div>
+
+<audio id="requestSound" preload="auto" loop><source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg"></audio>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = { apiKey: "AIzaSyBVIJq5napb_egiLdKhGtySZoPeLUkY9Q4", authDomain: "floot-delivery.firebaseapp.com", projectId: "floot-delivery", storageBucket: "floot-delivery.firebasestorage.app", messagingSenderId: "786230599434", appId: "1:786230599434:web:e1913bd8c2e69a7e1c64f3" };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+firebase.firestore().enableNetwork().catch(()=>{});
+
+const collection = (db, path) => db.collection(path);
+const doc = (a,b,c) => {
+  if(typeof a==='string') return db.doc(a);
+  if(c) return db.collection(b).doc(c);
+  return db.collection(a).doc(b);
+};
+const getDoc = async (docRef) => {
+  try{
+    const snap = await docRef.get({source:'server'});
+    return { exists: () => snap.exists, data: () => snap.data(), id: snap.id };
+  }catch(e){
+    try{
+      const snap2 = await docRef.get({source:'cache'});
+      return { exists: () => snap2.exists, data: () => snap2.data(), id: snap2.id };
+    }catch{
+      const snap3 = await docRef.get();
+      return { exists: () => snap3.exists, data: () => snap3.data(), id: snap3.id };
+    }
+  }
+};
+const setDoc = (docRef, data) => docRef.set(data);
+const updateDoc = (docRef, data) => docRef.update(data);
+const query = (collRef, ...args) => {
+  let q=collRef;
+  for(let arg of args){
+    if(arg && arg.type==='orderBy') q=q.orderBy(arg.field, arg.dir);
+    if(arg && arg.type==='limit') q=q.limit(arg.val);
+  }
+  return q;
+};
+const orderBy = (field, dir='asc') => ({type:'orderBy', field, dir});
+const limit = (val) => ({type:'limit', val});
+const _onSnapshot = (q, cb) => {
+  return q.onSnapshot({includeMetadataChanges:true}, snap => {
+    const fakeSnap = {
+      size: snap.size,
+      docs: snap.docs.map(d => ({id:d.id, data:()=>d.data(), ...d.data()})),
+      forEach: (fn) => snap.docs.forEach(doc => fn({id:doc.id, data:()=>doc.data(), ...doc.data()}))
+    };
+    cb(fakeSnap);
+  }, err => { console.error("Snapshot error", err); });
+};
+const onSnapshot = _onSnapshot;
+
+async function getDriverViaREST(docId){
+  try{
+    const url=`https://firestore.googleapis.com/v1/projects/floot-delivery/databases/(default)/documents/drivers/${docId}`;
+    const res=await fetch(url);
+    if(!res.ok) return null;
+    const json=await res.json();
+    if(!json.fields) return null;
+    function parseField(f){
+      if(!f) return null;
+      if(f.stringValue!==undefined) return f.stringValue;
+      if(f.integerValue!==undefined) return Number(f.integerValue);
+      if(f.doubleValue!==undefined) return Number(f.doubleValue);
+      if(f.booleanValue!==undefined) return f.booleanValue;
+      if(f.mapValue){ const obj={}; for(let k in f.mapValue.fields) obj[k]=parseField(f.mapValue.fields[k]); return obj; }
+      if(f.arrayValue) return (f.arrayValue.values||[]).map(parseField);
+      return null;
+    }
+    const data={};
+    for(let k in json.fields) data[k]=parseField(json.fields[k]);
+    return data;
+  }catch(e){ console.log("REST failed", e.message); return null; }
+}
+</script>
+<script>
+function showInAppNotification(msg,type){
+  var t=document.getElementById('flootToast'); if(t){ t.textContent=msg; t.style.background=type==='error'?'#DC2626':'#1F1A2E'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500); }
+}
+window.toast=(m,t)=>showInAppNotification(m, t==='err'?'error':'success');
+window.alert=(m)=>showInAppNotification(m, /fail|error|cannot/i.test(m)?'error':'success');
+
+let currentUser=null, allData=[], currentOrder=null, activeTrip=null, timer=null, sec=25, isOnline=true;
+let driverMap=null, tripMap=null, incomingMap=null;
+let driverMarker=null, userLat=6.5244, userLng=3.3792;
+let dRating=0;
+let profilePicBase64=null, ninDocBase64=null, updateProfilePicBase64=null, updateNinDocBase64=null;
+const RADAR_KM = 8;
+const RADAR_MINUTES = 30;
+const BASE_FARE = 1000;
+const MAX_PICKUP_MINS = 30;
+const BIKE_SPEED_KMH = 22;
+
+function isRecentOrder(order){ try{ const created=new Date(order.createdAt); const diffMins=(Date.now()-created.getTime())/60000; return diffMins<=RADAR_MINUTES; }catch{ return true; } }
+function estimatePickupMins(distKm){ return (distKm / BIKE_SPEED_KMH) * 60; }
+function haversine(lat1,lon1,lat2,lon2){ const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
+
+function clearTripUITotally(){
+  try{ activeTrip=null; currentOrder=null; localStorage.removeItem('floot_active_trip_id'); localStorage.removeItem('floot_active_trip_data'); }catch{}
+  var locked=document.getElementById('tripLocked'); 
+  if(locked){ locked.classList.remove('active'); locked.style.display='none'; }
+  var activeBox=document.getElementById('activeBox'); if(activeBox){ activeBox.innerHTML=''; activeBox.style.display='none'; }
+  var pc=document.getElementById('pickupPhase'); if(pc) pc.style.display='none';
+  var dc=document.getElementById('dropoffPhase'); if(dc) dc.style.display='none';
+  var oc=document.getElementById('otpPhase'); if(oc) oc.style.display='none';
+  var wait=document.getElementById('waitingBox'); if(wait) wait.style.display='block';
+  document.getElementById("homeView").style.display="block";
+  document.getElementById("bottomSheet").style.display="block";
+  if(driverMap) setTimeout(()=>driverMap.invalidateSize(),200);
+  var incoming=document.getElementById('incoming'); if(incoming) incoming.classList.remove('show');
+  var otpInput=document.getElementById('tripOtpInput'); if(otpInput) otpInput.value='';
+  var vMsg=document.getElementById('tripVerifyMsg'); if(vMsg) vMsg.textContent='';
+  dRating=0; document.querySelectorAll('.dstar').forEach(b=>{ b.style.background='#fff'; b.style.color='#8B8BA7'; });
+}
+function saveActiveTripId(id, orderData){ try{ const d=orderData||activeTrip||{id:id}; localStorage.setItem('floot_active_trip_id', id); localStorage.setItem('floot_active_trip_data', JSON.stringify(d)); localStorage.setItem('floot_active_trip_saved_at', Date.now().toString()); }catch{} }
+async function restoreActiveTrip(){
+  try{
+    var savedId=localStorage.getItem('floot_active_trip_id'); if(!savedId) return false;
+    var snap=await getDoc(doc(db,'delivery_requests', savedId));
+    if(snap.exists()){ var data=snap.data(); if(['accepted','picked_up','in_transit'].includes(data.status)){ activeTrip={id:snap.id, ...data}; currentOrder=activeTrip; openLockedTrip(activeTrip); return true; } else { localStorage.removeItem('floot_active_trip_id'); } } else { localStorage.removeItem('floot_active_trip_id'); }
+  }catch(e){} return false;
+}
+
+function fileToBase64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
+function handleFilePreview(input, previewIconId, fileNameId, checkId, boxId, storageVarCallback){
+  if(!input) return;
+  input.addEventListener('change', async (e)=>{
+    const file=e.target.files[0]; if(!file) return;
+    if(file.size>4*1024*1024){ showInAppNotification('File too large max 4MB','error'); return; }
+    const b64=await fileToBase64(file);
+    storageVarCallback(b64, file.name);
+    const icon=document.getElementById(previewIconId);
+    const nameEl=document.getElementById(fileNameId);
+    const check=document.getElementById(checkId);
+    const box=document.getElementById(boxId);
+    if(icon){ if(file.type.startsWith('image/')){ icon.innerHTML=`<img src="${b64}">`; } else { icon.innerHTML=`<i class="fa-solid fa-file-pdf"></i>`; } }
+    if(nameEl) nameEl.textContent=file.name.slice(0,28);
+    if(check) check.style.display='inline-block';
+    if(box) box.classList.add('has-file');
+  });
+}
+handleFilePreview(document.getElementById('regProfilePic'),'profilePreviewIcon','profileFileName','profileCheck','profileUploadBox',(b64)=>{ profilePicBase64=b64; });
+handleFilePreview(document.getElementById('regNinDoc'),'ninPreviewIcon','ninFileName','ninCheck','ninUploadBox',(b64)=>{ ninDocBase64=b64; });
+handleFilePreview(document.getElementById('updateProfilePic'),'updateProfilePreviewIcon','updateProfileFileName','updateProfileCheck','updateProfileUploadBox',(b64)=>{ updateProfilePicBase64=b64; });
+handleFilePreview(document.getElementById('updateNinDoc'),'updateNinPreviewIcon','updateNinFileName','updateNinCheck','updateNinUploadBox',(b64)=>{ updateNinDocBase64=b64; });
+
+function isKycComplete(profile){ return !!(profile && profile.profilePhoto && profile.idDocument); }
+function showKycModal(){ document.getElementById('kycUpdateModal').style.display='flex'; }
+function hideKycModal(){ document.getElementById('kycUpdateModal').style.display='none'; }
+
+const saved = JSON.parse(localStorage.getItem("floot_driver_session")||"null");
+if(saved){ loginWithProfile(saved); setTimeout(()=>restoreActiveTrip(), 1200); }
+function showMain(){ document.getElementById("authScreen").style.display="none"; document.getElementById("mainApp").style.display="flex"; setTimeout(initDriverMap, 300); }
+
+async function loginWithProfile(p){
+  currentUser=p;
+  document.getElementById("driverName").textContent=p.name||"Driver";
+  document.getElementById("driverEmail").textContent=p.email||"";
+  var av=document.getElementById("avatar"); if(p.profilePhoto){ av.innerHTML=`<img src="${p.profilePhoto}" style="width:100%;height:100%;object-fit:cover">`; } else { av.textContent=(p.name||"D").charAt(0).toUpperCase(); }
+  try{
+    document.getElementById("profileName").textContent=p.name||"Driver";
+    document.getElementById("profileEmail").textContent=p.email||"-";
+    document.getElementById("profilePhone").textContent=p.phone||"-";
+    document.getElementById("profileBike").textContent=p.bikeNumber||"-";
+    document.getElementById("profileEarnings").textContent="₦"+(p.totalEarnings||0).toLocaleString();
+    document.getElementById("profileTrips").textContent=p.totalTrips||0;
+    var largeAv=document.getElementById("profileAvatarLarge"); if(largeAv){ if(p.profilePhoto){ largeAv.innerHTML=`<img src="${p.profilePhoto}" style="width:100%;height:100%;object-fit:cover">`; } else { largeAv.innerHTML=`<i class="fa-solid fa-user" style="font-size:24px;color:#8B8BA7"></i>`; } }
+    renderKycStatus(p);
+  }catch{}
+  document.getElementById("earnings").textContent="₦0.00";
+  document.getElementById("earnTotal").textContent="₦"+(p.totalEarnings||0).toLocaleString();
+  document.getElementById("trips").textContent=p.totalTrips||0;
+  document.getElementById("walletBalance").textContent="₦"+(p.walletBalance||0).toLocaleString();
+  var wp=document.getElementById("profileWallet"); if(wp) wp.textContent="₦"+(p.walletBalance||0).toLocaleString();
+  getDoc(doc(db,"drivers",p.id)).then(snap=>{
+    if(snap.exists()){
+      var d=snap.data();
+      document.getElementById("earnings").textContent="₦"+(d.totalEarnings||0).toLocaleString();
+      document.getElementById("earnTotal").textContent="₦"+(d.totalEarnings||0).toLocaleString();
+      document.getElementById("trips").textContent=d.totalTrips||0;
+      document.getElementById("walletBalance").textContent="₦"+(d.walletBalance||0).toLocaleString();
+      if(d.profilePhoto || d.idDocument){ currentUser={...currentUser, ...d}; localStorage.setItem("floot_driver_session", JSON.stringify(currentUser)); renderKycStatus(currentUser); enforceKycBlock(); enforceWalletBlock(); }
+    }
+  });
+  showMain(); startListener(p.id); startLocation(); setTimeout(()=>{enforceKycBlock(); enforceWalletBlock();}, 800);
+}
+function renderKycStatus(p){
+  const badge=document.getElementById('kycBadge');
+  const statusEl=document.getElementById('profileKycStatus');
+  const docsList=document.getElementById('profileDocsList');
+  const updateBtn=document.getElementById('updateKycBtn');
+  const complete=isKycComplete(p);
+  if(badge) badge.style.display=complete?'inline-flex':'none';
+  if(statusEl){
+    if(complete){ statusEl.textContent='✓ VERIFIED • CAN GO ONLINE'; statusEl.style.background='#ECFDF5'; statusEl.style.color='#065F46'; }
+    else { statusEl.textContent='⚠ NOT VERIFIED • UPDATE REQUIRED'; statusEl.style.background='#FEF2F2'; statusEl.style.color='#991B1B'; }
+  }
+  if(docsList){
+    let html='';
+    html+=`<div style="display:flex;gap:8px;align-items:center;padding:8px;border:1px solid ${p.profilePhoto?'#A7F3D0':'#FECACA'};border-radius:10px;background:${p.profilePhoto?'#ECFDF5':'#FEF2F2'}"><div style="width:36px;height:36px;border-radius:8px;overflow:hidden;background:#fff;display:grid;place-items:center">${p.profilePhoto?`<img src="${p.profilePhoto}" style="width:100%;height:100%;object-fit:cover">`:`<i class="fa-solid fa-camera" style="color:#8B8BA7"></i>`}</div><div style="flex:1"><div style="font-weight:700;font-size:11px">Profile Photo</div><div style="font-size:10px;color:${p.profilePhoto?'#065F46':'#DC2626'}">${p.profilePhoto?'Uploaded':'Missing'}</div></div><div style="font-size:16px;color:${p.profilePhoto?'#10B981':'#DC2626'}">${p.profilePhoto?'✓':'✗'}</div></div>`;
+    html+=`<div style="display:flex;gap:8px;align-items:center;padding:8px;border:1px solid ${p.idDocument?'#A7F3D0':'#FECACA'};border-radius:10px;background:${p.idDocument?'#ECFDF5':'#FEF2F2'};margin-top:8px"><div style="width:36px;height:36px;border-radius:8px;background:#fff;display:grid;place-items:center;color:#7C3AED"><i class="fa-solid fa-id-card"></i></div><div style="flex:1"><div style="font-weight:700;font-size:11px">NIN / ID Document</div><div style="font-size:10px;color:${p.idDocument?'#065F46':'#DC2626'}">${p.idDocument?'Uploaded • '+ (p.idDocumentName||'ID'):'Missing'}</div></div><div style="font-size:16px;color:${p.idDocument?'#10B981':'#DC2626'}">${p.idDocument?'✓':'✗'}</div></div>`;
+    docsList.innerHTML=html;
+  }
+  if(updateBtn) updateBtn.style.display='block';
+}
+
+function enforceWalletBlock(){
+  if(!currentUser) return;
+  var bal=currentUser.walletBalance||0;
+  var statusEl=document.getElementById('walletStatus');
+  if(statusEl){
+    if(bal<0) statusEl.textContent='Negative • Top-up needed';
+    else if(bal<500) statusEl.textContent='Low • Top-up soon';
+    else statusEl.textContent='Active';
+  }
+  var warn=document.getElementById('walletLowWarning');
+  if(warn){
+    if(bal<500){ warn.style.display='flex'; var t=warn.querySelector('.walletBalText'); if(t) t.textContent='₦'+bal.toLocaleString(); }
+    else warn.style.display='none';
+  }
+}
+
+function enforceKycBlock(){
+  if(!currentUser) return;
+  const complete=isKycComplete(currentUser);
+  const blockWarn=document.getElementById('kycBlockWarning');
+  if(!complete){
+    isOnline=false;
+    const sw=document.getElementById('onlineSwitch'); if(sw) sw.classList.remove('on');
+    const ot=document.getElementById('onlineText'); if(ot) ot.textContent='OFFLINE';
+    const conn=document.getElementById('conn'); if(conn) conn.textContent='Verification Needed';
+    if(blockWarn) blockWarn.style.display='flex';
+    if(!activeTrip) showKycModal();
+  } else {
+    if(blockWarn) blockWarn.style.display='none';
+    hideKycModal();
+  }
+}
+
+document.getElementById("loginTab").onclick=()=>{ document.getElementById("loginTab").classList.add("active"); document.getElementById("regTab").classList.remove("active"); document.getElementById("loginForm").style.display="block"; document.getElementById("regForm").style.display="none"; };
+document.getElementById("regTab").onclick=()=>{ document.getElementById("regTab").classList.add("active"); document.getElementById("loginTab").classList.remove("active"); document.getElementById("loginForm").style.display="none"; document.getElementById("regForm").style.display="block"; };
+document.getElementById('eyeLogin')?.addEventListener('click', function(){ var i=document.getElementById('loginPass'); var is=i.type==='password'; i.type=is?'text':'password'; this.innerHTML=is?'<i class="fa-solid fa-eye-slash"></i>':'<i class="fa-solid fa-eye"></i>'; });
+document.getElementById('eyeReg')?.addEventListener('click', function(){ var i=document.getElementById('regPass'); var is=i.type==='password'; i.type=is?'text':'password'; this.innerHTML=is?'<i class="fa-solid fa-eye-slash"></i>':'<i class="fa-solid fa-eye"></i>'; });
+
+document.getElementById("regBtn").onclick=async()=>{
+  const name=document.getElementById("regName").value.trim(), phone=document.getElementById("regPhone").value.trim(), email=document.getElementById("regEmail").value.trim().toLowerCase(), pass=document.getElementById("regPass").value.trim(), bike=document.getElementById("regBike").value.trim();
+  const msg=document.getElementById("regMsg");
+  if(!name||!phone||!email||!pass||!bike){ msg.textContent="Fill all fields"; showInAppNotification('Fill all fields','error'); return; }
+  if(pass.length<6){ msg.textContent="Password min 6"; return; }
+  if(!profilePicBase64){ msg.textContent="Profile picture required"; showInAppNotification('Profile picture required','error'); return; }
+  if(!ninDocBase64){ msg.textContent="NIN / ID document required"; showInAppNotification('NIN / ID required','error'); return; }
+  msg.textContent="Creating...";
+  try{
+    const id=email.replace(/[^a-z0-9]/g,"_");
+    const ex=await getDoc(doc(db,"drivers",id));
+    if(ex.exists()){ msg.textContent="Email exists"; return; }
+    const profile={id,name,phone,email,password:pass,bikeNumber:bike,profilePhoto:profilePicBase64,idDocument:ninDocBase64,idDocumentName:document.getElementById('ninFileName').textContent||'ID Document',totalEarnings:0,totalTrips:0,walletBalance:0,totalFeesPaid:0,kycVerified:true,kycUpdatedAt:new Date().toISOString(),createdAt:new Date().toISOString()};
+    await setDoc(doc(db,"drivers",id),profile);
+    localStorage.setItem("floot_driver_session",JSON.stringify(profile));
+    msg.textContent="✓ Created - Verified";
+    showInAppNotification('Account created & verified','success');
+    setTimeout(()=>loginWithProfile(profile),500);
+  }catch(e){ msg.textContent=e.message; showInAppNotification(e.message,'error'); }
+};
+document.getElementById("loginBtn").onclick=async()=>{
+  const email=document.getElementById("loginEmail").value.trim().toLowerCase(), pass=document.getElementById("loginPass").value.trim();
+  const msg=document.getElementById("loginMsg");
+  if(!email||!pass){ msg.textContent="Enter email & pass"; return; }
+  msg.textContent="Logging in...";
+  const id=email.replace(/[^a-z0-9]/g,"_");
+  try{
+    let snap=null;
+    try{
+      snap=await getDoc(doc(db,"drivers",id));
+    }catch(sdkErr){
+      console.log("SDK failed, trying REST", sdkErr.message);
+      const restData=await getDriverViaREST(id);
+      if(restData){
+        if(restData.password!==pass){ msg.textContent="Wrong pass"; return; }
+        if(typeof restData.walletBalance==="undefined") restData.walletBalance=0;
+        localStorage.setItem("floot_driver_session",JSON.stringify(restData));
+        msg.textContent="✓ Success via REST";
+        setTimeout(()=>loginWithProfile(restData),400);
+        return;
+      }
+      throw sdkErr;
+    }
+    if(!snap.exists()){ msg.textContent="No account - "+id; return; }
+    const p=snap.data();
+    if(p.password!==pass){ msg.textContent="Wrong pass"; return; }
+    if(typeof p.walletBalance==="undefined") p.walletBalance=0;
+    localStorage.setItem("floot_driver_session",JSON.stringify(p));
+    msg.textContent="✓ Success";
+    setTimeout(()=>loginWithProfile(p),400);
+  }catch(e){
+    console.error(e);
+    msg.textContent="Trying REST fallback...";
+    try{
+      const restData=await getDriverViaREST(id);
+      if(restData){
+        if(restData.password!==pass){ msg.textContent="Wrong pass"; return; }
+        localStorage.setItem("floot_driver_session",JSON.stringify(restData));
+        msg.textContent="✓ Success via REST";
+        setTimeout(()=>loginWithProfile(restData),400);
+        return;
+      }
+    }catch{}
+    msg.textContent="Failed offline: "+e.message;
+  }
+};
+document.getElementById("logoutBtn").onclick=()=>{ if(activeTrip){ showInAppNotification("🔒 Cannot logout during active trip","error"); return; } localStorage.removeItem("floot_driver_session"); localStorage.removeItem("floot_active_trip_id"); location.reload(); };
+document.getElementById("profileLogoutBtn").onclick=()=>{ if(activeTrip){ showInAppNotification("🔒 Cannot logout during active trip","error"); return; } localStorage.removeItem("floot_driver_session"); localStorage.removeItem("floot_active_trip_id"); location.reload(); };
+document.getElementById("kycLogoutBtn").onclick=()=>{ localStorage.removeItem("floot_driver_session"); location.reload(); };
+document.getElementById("kycBlockBtn")?.addEventListener('click', ()=>showKycModal());
+document.getElementById("updateKycBtn")?.addEventListener('click', ()=>showKycModal());
+document.getElementById("saveKycBtn").onclick=async()=>{
+  const msg=document.getElementById('kycUpdateMsg');
+  if(!updateProfilePicBase64 && !currentUser.profilePhoto){ msg.textContent='Profile picture required'; showInAppNotification('Profile picture required','error'); return; }
+  if(!updateNinDocBase64 && !currentUser.idDocument){ msg.textContent='NIN / ID required'; showInAppNotification('ID required','error'); return; }
+  msg.textContent='Saving...';
+  try{
+    const updates={};
+    if(updateProfilePicBase64) updates.profilePhoto=updateProfilePicBase64;
+    if(updateNinDocBase64){ updates.idDocument=updateNinDocBase64; updates.idDocumentName=document.getElementById('updateNinFileName').textContent||'ID'; }
+    updates.kycVerified=true; updates.kycUpdatedAt=new Date().toISOString();
+    await updateDoc(doc(db,"drivers",currentUser.id), updates);
+    currentUser={...currentUser, ...updates};
+    localStorage.setItem("floot_driver_session", JSON.stringify(currentUser));
+    msg.textContent='✓ Verified';
+    showInAppNotification('✓ Verified - You can now go online','success');
+    renderKycStatus(currentUser);
+    var av=document.getElementById("avatar"); if(currentUser.profilePhoto){ av.innerHTML=`<img src="${currentUser.profilePhoto}" style="width:100%;height:100%;object-fit:cover">`; }
+    var largeAv=document.getElementById("profileAvatarLarge"); if(largeAv && currentUser.profilePhoto){ largeAv.innerHTML=`<img src="${currentUser.profilePhoto}" style="width:100%;height:100%;object-fit:cover">`; }
+    setTimeout(()=>{ hideKycModal(); const blockWarn=document.getElementById('kycBlockWarning'); if(blockWarn) blockWarn.style.display='none'; isOnline=true; const sw=document.getElementById('onlineSwitch'); if(sw) sw.classList.add('on'); const ot=document.getElementById('onlineText'); if(ot) ot.textContent='ONLINE'; }, 800);
+  }catch(e){ msg.textContent=e.message; showInAppNotification(e.message,'error'); }
+};
+
+function initDriverMap(){ if(driverMap){ setTimeout(()=>driverMap.invalidateSize(),200); return; } driverMap=L.map('driverMap',{zoomControl:false, attributionControl:false}).setView([userLat,userLng],13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(driverMap); driverMarker=L.marker([userLat,userLng],{icon:L.divIcon({html:'<div style="width:18px;height:18px;background:#7C3AED;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>',iconSize:[18,18]})}).addTo(driverMap); }
+function initTripMap(){
+  if(window.tripMap){
+    setTimeout(()=>{ window.tripMap.invalidateSize(true); },100);
+    setTimeout(()=>{ window.tripMap.invalidateSize(true); },400);
+    return;
+  }
+  try{
+    window.tripMap = L.map('tripMap',{zoomControl:false, attributionControl:false}).setView([userLat,userLng],14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(window.tripMap);
+    tripMap = window.tripMap;
+    setTimeout(()=>{ window.tripMap.invalidateSize(true); },150);
+  }catch(e){ console.log("tripMap init error", e); }
+}
+function initIncomingMap(){ if(window.incomingMap){ window.incomingMap.invalidateSize(); return; } window.incomingMap=L.map('incomingMap',{zoomControl:false, attributionControl:false, dragging:false}).setView([6.5244,3.3792],12); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(window.incomingMap); incomingMap=window.incomingMap; }
+function startLocation(){ if(navigator.geolocation){ navigator.geolocation.watchPosition(pos=>{ userLat=pos.coords.latitude; userLng=pos.coords.longitude; if(driverMarker) driverMarker.setLatLng([userLat,userLng]); if(driverMap) driverMap.setView([userLat,userLng], driverMap.getZoom()); if(window.tripMap && activeTrip && activeTrip.status==='accepted'){ window.tripMap.setView([userLat,userLng]); } },()=>{}, {enableHighAccuracy:true}); } }
+async function geocode(addr){ try{ const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr+', Lagos, Nigeria')}&limit=1`); const j=await r.json(); if(j[0]) return {lat:parseFloat(j[0].lat), lng:parseFloat(j[0].lon), display:j[0].display_name}; }catch{} return null; }
+async function getRoute(a,b){ try{ const url=`https://router.project-osrm.org/route/v1/driving/${a.lng},${a.lat};${b.lng},${b.lat}?overview=full&geometries=geojson`; const r=await fetch(url); const j=await r.json(); if(j.routes&&j.routes[0]) return {coords:j.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]), distance:j.routes[0].distance/1000, duration:j.routes[0].duration/60}; }catch{} return null; }
+
+async function showIncoming(o){
+  if(activeTrip) return;
+  if(!isKycComplete(currentUser||{})){ return; }
+  if(!isRecentOrder(o)){ return; }
+  currentOrder=o;
+  document.getElementById("inTitle").textContent=o.pickup+" → "+o.dropoff;
+  document.getElementById("inPickup").textContent=o.pickup;
+  document.getElementById("inDropoff").textContent=o.dropoff;
+  document.getElementById("inDistance").textContent=(o.distance||0)+" km • Real distance";
+  document.getElementById("inOffer").textContent="₦"+(o.offerAmount||0).toLocaleString();
+  var off2=document.getElementById("inOffer2"); if(off2) off2.textContent="₦"+(o.offerAmount||0).toLocaleString();
+  document.getElementById("inItem").textContent=(o.itemType||"Parcel");
+  document.getElementById("inDesc").textContent=o.description||"Customer added parcel";
+  try{ const mins=Math.floor((Date.now()-new Date(o.createdAt).getTime())/60000); document.getElementById('inRadarInfo').textContent=`Within ${RADAR_KM}km • ${mins}m ago • 30-min radar`; }catch{}
+  const parcelImg=document.getElementById("inParcelImg");
+  if(o.parcelPhoto){ parcelImg.src=o.parcelPhoto; parcelImg.style.display="block"; } else parcelImg.style.display="none";
+  document.getElementById("incoming").classList.add("show");
+  sec=25; var cd=document.getElementById("countdown"); if(cd) cd.textContent=sec+"s";
+  if(timer) clearInterval(timer);
+  timer=setInterval(()=>{ sec--; var c=document.getElementById("countdown"); if(c) c.textContent=sec+"s"; if(sec<=0) hideIncoming(); },1000);
+  const sound=document.getElementById("requestSound");
+  try{ sound.currentTime=0; await sound.play(); }catch{}
+  if(navigator.vibrate) navigator.vibrate([400,100,400,100,400]);
+  setTimeout(async()=>{
+    initIncomingMap();
+    const p1=o.pickupLat&&o.pickupLng?{lat:o.pickupLat,lng:o.pickupLng,display:o.pickup}:await geocode(o.pickup);
+    const p2=o.dropoffLat&&o.dropoffLng?{lat:o.dropoffLat,lng:o.dropoffLng,display:o.dropoff}:await geocode(o.dropoff);
+    if(!incomingMap) return;
+    incomingMap.eachLayer(l=>{ if(l instanceof L.Marker || l instanceof L.Polyline) incomingMap.removeLayer(l); });
+    if(p1&&p2){
+      const distToPickup=haversine(userLat,userLng,p1.lat,p1.lng);
+      if(distToPickup>RADAR_KM){ hideIncoming(); showInAppNotification(`Order too far (${distToPickup.toFixed(1)}km) - Outside ${RADAR_KM}km radar`,'error'); return; }
+      var pa=document.getElementById("inPickupAddr"); if(pa) pa.textContent=p1.display.slice(0,60);
+      var da=document.getElementById("inDropoffAddr"); if(da) da.textContent=p2.display.slice(0,60);
+      L.marker([p1.lat,p1.lng],{icon:L.divIcon({html:'<div style="width:12px;height:12px;background:#10B981;border:3px solid #fff;border-radius:50%"></div>'})}).addTo(incomingMap);
+      L.marker([p2.lat,p2.lng],{icon:L.divIcon({html:'<div style="width:12px;height:12px;background:#7C3AED;border:3px solid #fff;border-radius:50%"></div>'})}).addTo(incomingMap);
+      const route=await getRoute(p1,p2);
+      if(route){ L.polyline(route.coords,{color:'#7C3AED',weight:4,opacity:.7,dashArray:'8,8'}).addTo(incomingMap); incomingMap.fitBounds(L.latLngBounds([ [p1.lat,p1.lng], [p2.lat,p2.lng] ]),{padding:[30,30]}); var d=document.getElementById("inDistance"); if(d) d.textContent=route.distance.toFixed(1)+" km • Real • ~"+Math.round(route.duration)+" min"; }
+      else { incomingMap.fitBounds(L.latLngBounds([ [p1.lat,p1.lng], [p2.lat,p2.lng] ]),{padding:[30,30]}); }
+    }
+  }, 400);
+}
+
+function getTodayDateStr(){ return new Date().toISOString().slice(0,10); }
+function checkDailyReset(){
+  const today = getTodayDateStr();
+  const last = localStorage.getItem('floot_last_earning_date');
+  if(last !== today){
+    localStorage.setItem('floot_last_earning_date', today);
+    const earnEl = document.getElementById('earnings');
+    if(earnEl) earnEl.textContent = '₦0.00';
+    const earnTodayEl = document.getElementById('earnToday');
+    if(earnTodayEl) earnTodayEl.textContent = '₦0.00';
+    console.log('Daily reset to 0.00 for', today);
+  }
+}
+setInterval(checkDailyReset, 60000);
+checkDailyReset();
+
+function calculateDailyEarnings(){
+  if(!currentUser) return 0;
+  const todayStr = new Date().toDateString();
+  let total = 0;
+  for(let r of allData){
+    if(r.driverId===currentUser.id && r.status==='delivered'){
+      try{
+        const d = new Date(r.deliveredAt||r.createdAt);
+        if(d.toDateString()===todayStr){
+          const fare = Number(r.offerAmount||0);
+          const fee = Math.round(fare*0.10);
+          total += (fare-fee);
+        }
+      }catch{}
+    }
+  }
+  const earnEl = document.getElementById('earnings');
+  if(earnEl) earnEl.textContent = '₦' + total.toLocaleString() + '.00';
+  const earnTodayEl = document.getElementById('earnToday');
+  if(earnTodayEl) earnTodayEl.textContent = '₦' + total.toLocaleString() + '.00';
+  return total;
+}
+
+let supportListenerUnsub = null;
+function initSupportChat(){
+  if(!currentUser) return;
+  const box = document.getElementById('supportMessages');
+  if(!box) return;
+  if(supportListenerUnsub) supportListenerUnsub();
+  const q = db.collection('support_chats').doc(currentUser.id).collection('messages').orderBy('createdAt','asc');
+  supportListenerUnsub = q.onSnapshot(snap=>{
+    if(snap.empty){ return; }
+    box.innerHTML = '';
+    snap.forEach(doc=>{
+      const m = doc.data();
+      const isDriver = m.sender === 'driver';
+      const div = document.createElement('div');
+      div.className = 'chat-bubble ' + (isDriver ? 'chat-driver' : 'chat-support');
+      div.innerHTML = `<div>${(m.text||'').replace(/</g,'&lt;')}</div><div class="chat-time">${new Date(m.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} ${isDriver?'• You':''}</div>`;
+      box.appendChild(div);
+    });
+    box.scrollTop = box.scrollHeight;
+  });
+}
+async function sendSupportMessage(text){
+  if(!text.trim() || !currentUser) return;
+  const msg = {
+    text: text.trim(),
+    driverId: currentUser.id,
+    driverName: currentUser.name||'Driver',
+    driverEmail: currentUser.email||'',
+    sender: 'driver',
+    createdAt: new Date().toISOString(),
+    bikeNumber: currentUser.bikeNumber||'',
+    walletBalance: currentUser.walletBalance||0
+  };
+  try{
+    await db.collection('support_chats').doc(currentUser.id).set({
+      driverId: currentUser.id,
+      driverName: currentUser.name,
+      lastMessage: text.trim(),
+      lastAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }, {merge:true});
+    await db.collection('support_chats').doc(currentUser.id).collection('messages').add(msg);
+    document.getElementById('supportInput').value = '';
+  }catch(e){ showInAppNotification(e.message,'error'); }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('supportSendBtn')?.addEventListener('click', ()=>{
+    const input = document.getElementById('supportInput');
+    if(input) sendSupportMessage(input.value);
+  });
+  document.getElementById('supportInput')?.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendSupportMessage(e.target.value); }
+  });
+  document.querySelectorAll('.support-quick').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ sendSupportMessage(btn.dataset.msg); });
+  });
+});
+
+function startListener(driverId){
+  const q=query(collection(db,"delivery_requests"), orderBy("createdAt","desc"), limit(80));
+  _onSnapshot(q, async snap=>{
+    allData=snap.docs.map(d=>({id:d.id,...d.data()}));
+    let searching=allData.filter(d=>d.status==="searching"&&!d.driverId);
+    searching=searching.filter(o=> isRecentOrder(o) && Number(o.offerAmount||0)>=BASE_FARE);
+    const nearby=[];
+    for(let o of searching){
+      if(o.pickupLat && o.pickupLng){
+        const dist=haversine(userLat,userLng,o.pickupLat,o.pickupLng);
+        const eta=estimatePickupMins(dist);
+        if(eta <= MAX_PICKUP_MINS) nearby.push(o);
+      } else {
+        nearby.push(o);
+      }
+    }
+    searching=nearby;
+    if(activeTrip){
+      const fresh=allData.find(d=>d.id===activeTrip.id);
+      if(fresh){ if(['delivered','cancelled'].includes(fresh.status)){ clearTripUITotally(); } else { activeTrip=fresh; updateLockedTripUI(fresh); } }
+      return;
+    }
+    if(currentOrder){ const still=allData.find(d=>d.id===currentOrder.id&&d.status==="searching"); if(!still) hideIncoming(); }
+    if(searching.length>0&&!currentOrder&&isOnline){ showIncoming(searching[0]); }
+    var rt=document.getElementById('radarText'); if(rt) rt.textContent=`${MAX_PICKUP_MINS}min Pickup • ₦${BASE_FARE.toLocaleString()} Base • ${searching.length} nearby`;
+    renderHistory(); renderEarnings();
+  });
+}
+
+function hideIncoming(){ document.getElementById("incoming").classList.remove("show"); if(timer) clearInterval(timer); currentOrder=null; const sound=document.getElementById("requestSound"); if(sound){ sound.pause(); sound.currentTime=0; } }
+document.getElementById("declineBtn").onclick=hideIncoming;
+document.getElementById("onlinePill").onclick=function(){
+  if(activeTrip){ showInAppNotification("🔒 Cannot offline during trip","error"); return; }
+  if(!isKycComplete(currentUser||{})){ showInAppNotification("Upload ID & Photo to go online","error"); showKycModal(); return; }
+  if((currentUser.walletBalance||0)<0){ showInAppNotification("❌ Wallet negative - Admin top-up needed","error"); return; }
+  const sw=document.getElementById("onlineSwitch");
+  sw.classList.toggle("on"); isOnline=sw.classList.contains("on");
+  document.getElementById("onlineText").textContent=isOnline?"ONLINE":"OFFLINE";
+  var conn=document.getElementById("conn"); if(conn) conn.textContent=isOnline?"Online":"Offline";
+  if(!isOnline) hideIncoming();
+};
+document.getElementById("testSoundBtn").onclick=async()=>{ const s=document.getElementById("requestSound"); try{ s.currentTime=0; await s.play(); setTimeout(()=>{ s.pause(); s.currentTime=0; }, 2000); if(navigator.vibrate) navigator.vibrate([300,100,300]); }catch{} };
+
+document.getElementById("acceptBtn").onclick=async()=>{
+  if(!currentOrder||!currentUser) return;
+  if(!isKycComplete(currentUser||{})){ showInAppNotification("Verify KYC first","error"); showKycModal(); return; }
+  var btn=document.getElementById("acceptBtn"); 
+  btn.disabled=true; 
+  btn.textContent="ACCEPTING...";
+  try{ 
+    await updateDoc(doc(db,"delivery_requests",currentOrder.id), {status:"accepted", driverId:currentUser.id, driverName:currentUser.name, acceptedAt: new Date().toISOString()}); 
+    const acceptedOrder = {...currentOrder, status:"accepted"};
+    saveActiveTripId(currentOrder.id, acceptedOrder); 
+    hideIncoming(); 
+    setTimeout(()=>openLockedTrip(acceptedOrder), 200); 
+  }catch(e){ 
+    showInAppNotification("Taken: "+e.message,"error"); 
+    hideIncoming(); 
+    btn.disabled=false;
+  }
+  btn.innerHTML=`ACCEPT • <span id="inOffer2">₦${(currentOrder?.offerAmount||0).toLocaleString()}</span>`;
+  btn.disabled=false;
+};
+document.getElementById("centerMeBtn").onclick=()=>{ if(driverMap) driverMap.setView([userLat,userLng],16); };
+window.openLockedTripById=async(id)=>{ const o=allData.find(x=>x.id===id); if(o) openLockedTrip(o); else { const snap=await getDoc(doc(db,"delivery_requests",id)); if(snap.exists()) openLockedTrip({id:snap.id,...snap.data()}); } };
+
+function openLockedTrip(order){
+  if(!order) return;
+  activeTrip = order;
+  currentOrder = order;
+  saveActiveTripId(order.id, order);
+  const locked = document.getElementById("tripLocked");
+  locked.style.display = "flex";
+  void locked.offsetWidth;
+  locked.classList.add("active");
+  document.getElementById("homeView").style.display = "none";
+  document.getElementById("bottomSheet").style.display = "none";
+  var dm = document.getElementById("driverMap"); if(dm) dm.style.display="none";
+  setTimeout(()=>{
+    initTripMap();
+    updateLockedTripUI(order);
+    setTimeout(()=>{ if(window.tripMap){ window.tripMap.invalidateSize(true); window.tripMap.setView([userLat,userLng],14); } }, 350);
+  }, 120);
+}
+
+function updateLockedTripUI(order){
+  if(!order) return;
+  var t=document.getElementById("tripHeaderTitle"); if(t) t.textContent=order.pickup+" → "+order.dropoff;
+  var tp=document.getElementById("tripPickup"); if(tp) tp.textContent=order.pickup;
+  var td=document.getElementById("tripDropoff"); if(td) td.textContent=order.dropoff;
+  var cn=document.getElementById("tripCustName"); if(cn) cn.textContent=order.customerName||"Customer";
+  var cp=document.getElementById("tripCustPhone"); if(cp){ const phone=(order.customerPhone||"").trim(); cp.textContent=phone||"No phone"; cp.onclick=()=>{ if(phone) window.location.href="tel:"+phone; }; }
+  var ti=document.getElementById("tripItem"); if(ti) ti.textContent=(order.itemType||"Parcel")+" • Tap number to call";
+  var tf=document.getElementById("tripFare"); if(tf) tf.textContent="₦"+(order.offerAmount||0).toLocaleString();
+  var tdi=document.getElementById("tripDistance"); if(tdi) tdi.textContent=(order.distance||0)+" km • Real route";
+  var callBtn=document.getElementById("tripCallBtn"); if(callBtn) callBtn.onclick=()=>{ const ph=(order.customerPhone||"").trim(); if(ph){ window.location.href="tel:"+ph; } };
+  var goP=document.getElementById("goPickupBtn"); if(goP) goP.onclick=()=> window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(order.pickup)}`, "_blank");
+  var goD=document.getElementById("goDropoffBtn"); if(goD) goD.onclick=()=> window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(order.dropoff)}`, "_blank");
+  const pickupPhase=document.getElementById("pickupPhase");
+  const dropoffPhase=document.getElementById("dropoffPhase");
+  const otpPhase=document.getElementById("otpPhase");
+  if(order.status === "accepted"){
+    pickupPhase.style.display="block"; dropoffPhase.style.display="none"; otpPhase.style.display="none";
+  } else if(order.status === "picked_up"){
+    pickupPhase.style.display="none"; dropoffPhase.style.display="block"; otpPhase.style.display="none";
+  } else if(order.status === "in_transit"){
+    pickupPhase.style.display="none"; dropoffPhase.style.display="none"; otpPhase.style.display="block";
+  }
+  var img=document.getElementById("tripParcelImg"); var noImg=document.getElementById("tripParcelNoImg");
+  if(img && noImg){ if(order.parcelPhoto){ img.src=order.parcelPhoto; img.style.display="block"; noImg.style.display="none"; } else { img.style.display="none"; noImg.style.display="grid"; } }
+  (async()=>{
+    if(!window.tripMap) return;
+    const p1=order.pickupLat&&order.pickupLng?{lat:order.pickupLat,lng:order.pickupLng,display:order.pickup}:await geocode(order.pickup);
+    const p2=order.dropoffLat&&order.dropoffLng?{lat:order.dropoffLat,lng:order.dropoffLng,display:order.dropoff}:await geocode(order.dropoff);
+    if(!p1||!p2) return;
+    window.tripMap.eachLayer(l=>{ if(l instanceof L.Marker || l instanceof L.Polyline) window.tripMap.removeLayer(l); });
+    L.marker([p1.lat,p1.lng],{icon:L.divIcon({html:'<div style="width:14px;height:14px;background:#10B981;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>'})}).addTo(window.tripMap);
+    L.marker([p2.lat,p2.lng],{icon:L.divIcon({html:'<div style="width:14px;height:14px;background:#7C3AED;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>'})}).addTo(window.tripMap);
+    const route=await getRoute(p1,p2);
+    if(route){ L.polyline(route.coords,{color:'#7C3AED',weight:5,opacity:.9}).addTo(window.tripMap); window.tripMap.fitBounds(L.latLngBounds([ [p1.lat,p1.lng], [p2.lat,p2.lng] ]),{padding:[50,50]}); var dEl=document.getElementById("tripDistance"); if(dEl) dEl.textContent=route.distance.toFixed(1)+" km • ~"+Math.round(route.duration)+" min"; }
+    else { window.tripMap.fitBounds(L.latLngBounds([ [p1.lat,p1.lng], [p2.lat,p2.lng] ]),{padding:[50,50]}); }
+  })();
+}
+
+document.getElementById("pickedUpBtn").onclick=async()=>{ if(!activeTrip) return; var btn=document.getElementById("pickedUpBtn"); if(btn) btn.textContent="Updating..."; try{ await updateDoc(doc(db,"delivery_requests",activeTrip.id), {status:"picked_up", pickedAt: new Date().toISOString()}); activeTrip.status="picked_up"; saveActiveTripId(activeTrip.id, activeTrip); document.getElementById("pickupPhase").style.display="none"; document.getElementById("dropoffPhase").style.display="block"; showInAppNotification("✓ Picked up","success"); }catch(e){ showInAppNotification(e.message,"error"); if(btn) btn.innerHTML='<i class="fa-solid fa-box"></i> PICKED UP • Item collected'; } };
+document.getElementById("startTripBtn").onclick=async()=>{ if(!activeTrip) return; var btn=document.getElementById("startTripBtn"); if(btn) btn.textContent="Starting..."; try{ await updateDoc(doc(db,"delivery_requests",activeTrip.id), {status:"in_transit", startedAt: new Date().toISOString()}); activeTrip.status="in_transit"; saveActiveTripId(activeTrip.id, activeTrip); document.getElementById("dropoffPhase").style.display="none"; document.getElementById("otpPhase").style.display="block"; showInAppNotification("Trip started","success"); }catch(e){ showInAppNotification(e.message,"error"); if(btn) btn.innerHTML='<i class="fa-solid fa-route"></i> START TRIP TO DROPOFF'; } };
+async function cancelTrip(){ if(!activeTrip) return; if(!confirm(`Cancel trip? ${activeTrip.pickup} → ${activeTrip.dropoff}`)) return; var id=activeTrip.id; try{ await updateDoc(doc(db,"delivery_requests",id), {status:"searching", driverId:"", driverName:"", cancelledBy:"driver", cancelledAt: new Date().toISOString()}); clearTripUITotally(); showInAppNotification("✓ Trip cancelled","success"); }catch(e){ clearTripUITotally(); showInAppNotification("✓ Cancelled locally","success"); } }
+document.getElementById("cancelTripBtn1").onclick=cancelTrip; document.getElementById("cancelTripBtn2").onclick=cancelTrip; document.getElementById("cancelTripBtn3").onclick=cancelTrip; window.cancelTripNow=cancelTrip;
+document.getElementById("tripVerifyBtn").onclick=async()=>{
+  var enteredEl=document.getElementById("tripOtpInput"); var msg=document.getElementById("tripVerifyMsg"); var entered=enteredEl?enteredEl.value.trim():"";
+  if(entered.length!==4){ if(msg) msg.textContent="Enter 4-digit OTP"; showInAppNotification("Enter 4-digit OTP","error"); return; }
+  if(!currentUser||!activeTrip){ if(msg) msg.textContent="No trip"; return; }
+  if(msg) msg.textContent="Verifying...";
+  try{
+    const fresh=await getDoc(doc(db,"delivery_requests",activeTrip.id)); if(!fresh.exists()){ if(msg) msg.textContent="Not found"; return; } const fd=fresh.data();
+    if(String(fd.otp).trim()!==String(entered).trim()){ if(msg){ msg.style.color="#DC2626"; msg.textContent="❌ Wrong OTP "+entered; } showInAppNotification("❌ Wrong OTP","error"); return; }
+    await updateDoc(doc(db,"delivery_requests",activeTrip.id), {status:"delivered", deliveredAt:new Date().toISOString()});
+    const ref=doc(db,"drivers",currentUser.id); const snap=await getDoc(ref); const d=snap.data()||{}; 
+    const currentEarn=Number(d.totalEarnings||0); const currentTrips=Number(d.totalTrips||0); const currentWallet=Number(d.walletBalance||0); const currentFees=Number(d.totalFeesPaid||0);
+    const fare=Number(fd.offerAmount||0);
+    const fee=Math.round(fare*0.10);
+    const netEarn=fare-fee;
+    const newEarn=currentEarn+netEarn; const newTrips=currentTrips+1; const newWallet=currentWallet-fee; const newFees=currentFees+fee;
+    await updateDoc(ref,{totalEarnings:newEarn,totalTrips:newTrips,walletBalance:newWallet,totalFeesPaid:newFees,lastDeliveryAt:new Date().toISOString()}); 
+    currentUser.totalEarnings=newEarn; currentUser.totalTrips=newTrips; currentUser.walletBalance=newWallet; currentUser.totalFeesPaid=newFees;
+    localStorage.setItem("floot_driver_session",JSON.stringify(currentUser));
+    document.getElementById("earnings").textContent="₦"+newEarn.toLocaleString(); document.getElementById("earnTotal").textContent="₦"+newEarn.toLocaleString(); document.getElementById("trips").textContent=newTrips;
+    var wp=document.getElementById("walletBalance"); if(wp) wp.textContent="₦"+newWallet.toLocaleString();
+    var wp2=document.getElementById("profileWallet"); if(wp2) wp2.textContent="₦"+newWallet.toLocaleString();
+    var feeEl=document.getElementById("totalFeesPaid"); if(feeEl) feeEl.textContent="₦"+newFees.toLocaleString();
+    if(msg){ msg.style.color="#065F46"; msg.textContent="✓ Delivered +₦"+netEarn.toLocaleString()+" (Fee ₦"+fee+")"; } 
+    showInAppNotification("✓ Delivered +₦"+netEarn+" (Fee ₦"+fee+" from wallet)","success");
+    setTimeout(()=>{ document.getElementById("rateCustName").textContent="How was trip with "+(fd.customerName||"Customer")+"?"; document.getElementById("driverRatingModal").style.display="flex"; }, 600);
+  }catch(e){ if(msg){ msg.style.color="#DC2626"; msg.textContent=e.message; } showInAppNotification(e.message,"error"); }
+};
+document.getElementById("tripCenterBtn").onclick=()=>{ if(window.tripMap) window.tripMap.setView([userLat,userLng],15); };
+document.querySelectorAll('.dstar').forEach(function(btn){ btn.addEventListener('click', function(){ dRating=parseInt(this.dataset.v); document.querySelectorAll('.dstar').forEach(function(b){ var v=parseInt(b.dataset.v); if(v<=dRating){ b.style.background='#7C3AED'; b.style.color='#fff'; } else { b.style.background='#fff'; b.style.color='#8B8BA7'; } }); var lbl=document.getElementById('driverRatingLabel'); if(lbl){ var t=['','Poor','Fair','Good','Very Good','Excellent']; lbl.textContent=t[dRating]; } }); });
+document.getElementById("skipDriverRatingBtn").onclick=function(){ document.getElementById("driverRatingModal").style.display="none"; clearTripUITotally(); showInAppNotification("✓ Trip completed","success"); };
+document.getElementById("submitDriverRatingBtn").onclick=async function(){
+  try{
+    if(!dRating){ showInAppNotification("Tap a star","error"); return; }
+    this.textContent="Saving..."; this.disabled=true;
+    var tripId="trip_"+Date.now(); try{ if(activeTrip && activeTrip.id) tripId=String(activeTrip.id); }catch{}
+    var driverId="driver"; try{ if(currentUser && currentUser.id) driverId=String(currentUser.id); }catch{}
+    var comment=""; try{ var c=document.getElementById("driverRatingComment"); if(c) comment=String(c.value||""); }catch{}
+    try{ await setDoc(doc(db,"driver_ratings", tripId+"_"+Date.now()), {tripId:tripId, driverId:driverId, rating:Number(dRating), comment:comment, at:new Date().toISOString()}); }catch{}
+    showInAppNotification("✓ Rated "+Number(dRating)+" stars","success");
+  }catch{ showInAppNotification("✓ Rated","success"); }finally{ var m=document.getElementById("driverRatingModal"); if(m) m.style.display="none"; clearTripUITotally(); try{ this.textContent="SUBMIT"; this.disabled=false; }catch{} dRating=0; document.querySelectorAll('.dstar').forEach(function(b){ b.style.background='#fff'; b.style.color='#8B8BA7'; }); }
+};
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.onclick=()=>{
+    if(activeTrip){ showInAppNotification("🔒 Complete trip first","error"); return; }
+    document.querySelectorAll(".nav-item").forEach(i=>i.classList.remove("active")); item.classList.add("active");
+    const view=item.dataset.view;
+    document.getElementById("homeView").style.display= view==="home"?"block":"none";
+    document.getElementById("bottomSheet").style.display= view==="home"?"block":"none";
+    var dm=document.getElementById("driverMap"); if(dm){ dm.style.display= view==="home"?"block":"none"; if(view==="home") setTimeout(()=>driverMap.invalidateSize(),200); }
+    document.getElementById("historyView").style.display= view==="history"?"block":"none";
+    document.getElementById("profileView").style.display= view==="profile"?"block":"none";
+    document.getElementById("earningsView").style.display= view==="earnings"?"block":"none";
+    const supView=document.getElementById("supportView"); if(supView) supView.style.display= view==="support"?"flex":"none";
+    if(view==="support"){ initSupportChat(); }
+    if(view==="home"&&driverMap) setTimeout(()=>driverMap.invalidateSize(), 200);
+  };
+});
+function renderHistory(){ var box=document.getElementById("historyBox"); if(!box) return; var mine=allData.filter(r=>r.driverId===currentUser?.id && r.status==="delivered").sort((a,b)=> new Date(b.deliveredAt||b.createdAt)-new Date(a.deliveredAt||a.createdAt)); if(mine.length===0){ box.innerHTML='<div class="small">No delivered trips yet</div>'; return; } box.innerHTML=mine.map(r=>`<div class="history-item"><div style="width:40px;height:40px;border-radius:10px;background:#ECFDF5;display:grid;place-items:center;color:#10B981"><i class="fa-solid fa-check"></i></div><div style="flex:1"><div style="font-weight:700;font-size:13px">${r.pickup} → ${r.dropoff}</div><div class="small">${new Date(r.deliveredAt||r.createdAt).toLocaleString()} • ${r.distance||''}km</div></div><div style="text-align:right"><div style="font-weight:900;color:#7C3AED">₦${(r.offerAmount||0).toLocaleString()}</div></div></div>`).join(""); }
+function renderEarnings(){ if(!currentUser) return; var mine=allData.filter(r=>r.driverId===currentUser?.id && r.status==="delivered"); var today=new Date().toDateString(); var todayEarn=mine.filter(r=> new Date(r.deliveredAt||r.createdAt).toDateString()===today).reduce((s,r)=>{ const fare=Number(r.offerAmount||0); return s + (fare - Math.round(fare*0.10)); },0); var et=document.getElementById("earnToday"); if(et) et.textContent="₦"+todayEarn.toLocaleString()+".00"; var el=document.getElementById("earnList"); if(el) el.innerHTML=mine.slice(0,20).map(r=>{ const net = Number(r.offerAmount||0) - Math.round(Number(r.offerAmount||0)*0.10); return `<div class="card" style="display:flex;justify-content:space-between"><span class="small">${r.pickup.slice(0,18)} → ${r.dropoff.slice(0,18)} • ${new Date(r.deliveredAt||r.createdAt).toLocaleDateString()}</span><b>₦${net.toLocaleString()}.00</b></div>`}).join(""); calculateDailyEarnings(); }
+window.addEventListener("popstate", ()=>{ if(activeTrip){ history.pushState(null,"",location.href); document.getElementById("tripLocked").classList.add("active"); } }); history.pushState(null,"",location.href);
+</script>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</html>
